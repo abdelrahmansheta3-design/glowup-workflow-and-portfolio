@@ -1,0 +1,292 @@
+{
+  "name": "Daily Restaurant Report – Sales + Competitors (Demo)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "88f5682a-850f-4b7c-8663-576790205ceb",
+      "name": "Every day 8:00 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== Demo sales generator — replace this node with Grubtech API later =====\nconst MENU = [\n [\"Grilled Chicken Rice Bowl\",\"Bowls\",42,12],[\"Teriyaki Salmon Bowl\",\"Bowls\",55,7],[\"Beef Burrito Bowl\",\"Bowls\",48,8],\n [\"Chicken Caesar Wrap\",\"Wraps\",35,9],[\"Falafel Hummus Wrap\",\"Wraps\",29,5],[\"Protein Shawarma Wrap\",\"Wraps\",33,7],\n [\"Quinoa Avocado Salad\",\"Salads\",38,6],[\"Greek Chicken Salad\",\"Salads\",36,6],[\"Tuna Power Salad\",\"Salads\",39,4],\n [\"Lean Beef Burger\",\"Burgers\",45,7],[\"Chicken Burger\",\"Burgers\",39,6],[\"Protein Pancakes\",\"Breakfast\",32,5],\n [\"Egg White Omelette\",\"Breakfast\",28,4],[\"Overnight Oats\",\"Breakfast\",22,3],[\"Peanut Butter Shake\",\"Shakes\",26,6],\n [\"Berry Protein Smoothie\",\"Shakes\",24,5],[\"Protein Brownie\",\"Snacks\",15,4],[\"Energy Balls\",\"Snacks\",14,3]];\nconst CH = [[\"Talabat\",.42,.25],[\"Deliveroo\",.22,.28],[\"Careem\",.14,.22],[\"Noon Food\",.10,.20],[\"Direct\",.12,0]];\nconst HOURS=[7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23], HW=[2,4,5,4,6,10,11,7,4,3,4,7,10,11,8,5,2];\nfunction rng(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}\nfunction hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}\nfunction pick(r,arr,w){const s=w.reduce((a,b)=>a+b,0);let x=r()*s;for(let i=0;i<arr.length;i++){x-=w[i];if(x<=0)return arr[i];}return arr[arr.length-1];}\nfunction poisson(r,l){let L=Math.exp(-l/4),k=0,p=1,tot=0;for(let j=0;j<4;j++){k=0;p=1;do{k++;p*=r();}while(p>L);tot+=k-1;}return tot;}\nfunction dayOrders(dateStr){\n  const r=rng(hash(dateStr)); const d=new Date(dateStr+\"T00:00:00Z\"); const wd=d.getUTCDay(); // 0 Sun\n  const base = (wd===4||wd===5)?110:(wd===6?95:85); // Thu/Fri busiest\n  const days=(d-new Date(\"2026-04-01T00:00:00Z\"))/864e5; let trend=1+days/183*0.18; if(d.getUTCMonth()===7) trend*=0.85;\n  const n=poisson(r,base*trend); const orders=[];\n  for(let i=0;i<n;i++){\n    const ch=pick(r,CH,CH.map(c=>c[1])); const hour=pick(r,HOURS,HW); const cancelled=r()<0.03;\n    const promo=r()<((ch[0]===\"Talabat\"||ch[0]===\"Deliveroo\")?.35:.15); const lines=[]; const nl=pick(r,[1,2,3],[55,33,12]);\n    for(let j=0;j<nl;j++){const m=pick(r,MENU,MENU.map(x=>x[3])); const q=r()<.85?1:2; const g=m[2]*q; const disc=promo?g*pick(r,[.15,.2,.3],[1,1,1]):0; lines.push({item:m[0],cat:m[1],qty:q,net:g-disc,disc});}\n    orders.push({channel:ch[0],comm:ch[2],hour,cancelled,promo,lines});\n  }\n  return orders;\n}\nfunction summarize(dateStr){\n  const os=dayOrders(dateStr), ok=os.filter(o=>!o.cancelled);\n  const sum=a=>Math.round(a.reduce((x,y)=>x+y,0));\n  const net=sum(ok.flatMap(o=>o.lines.map(l=>l.net))), payout=sum(ok.flatMap(o=>o.lines.map(l=>l.net*(1-o.comm))));\n  const disc=sum(ok.flatMap(o=>o.lines.map(l=>l.disc)));\n  const items={}, ch={}, hrs={};\n  for(const o of ok){ch[o.channel]=(ch[o.channel]||0)+o.lines.reduce((a,l)=>a+l.net,0); hrs[o.hour]=(hrs[o.hour]||0)+1;\n    for(const l of o.lines) items[l.item]=(items[l.item]||0)+l.qty;}\n  const sorted=Object.entries(items).sort((a,b)=>b[1]-a[1]);\n  return {date:dateStr, orders:ok.length, cancelled:os.length-ok.length, net_sales_aed:net, net_payout_aed:payout, discounts_aed:disc,\n    avg_order_aed:ok.length?Math.round(net/ok.length):0,\n    top3:sorted.slice(0,3), bottom3:sorted.slice(-3).reverse(),\n    channels:Object.fromEntries(Object.entries(ch).sort((a,b)=>b[1]-a[1]).map(([k,v])=>[k,Math.round(v)])),\n    peak_hours:Object.entries(hrs).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([h,c])=>`${h}:00 (${c} orders)`)};\n}\nconst iso=d=>d.toISOString().slice(0,10);\n// \"yesterday\" in Dubai time\nconst nowDubai=new Date(Date.now()+4*3600e3); const y=new Date(Date.UTC(nowDubai.getUTCFullYear(),nowDubai.getUTCMonth(),nowDubai.getUTCDate()-1));\nconst lw=new Date(y-7*864e5);\nconst Y=summarize(iso(y)), LW=summarize(iso(lw));\nconst last7=[];for(let i=6;i>=0;i--){const s=summarize(iso(new Date(y-i*864e5)));last7.push({date:s.date,net:s.net_sales_aed,orders:s.orders});}\nconst pct=(a,b)=>b?Math.round((a-b)/b*1000)/10:0;\nreturn [{json:{brand:\"Demo Kitchen (demo data)\", yesterday:Y, same_day_last_week:LW,\n  change_vs_last_week:{net_sales_pct:pct(Y.net_sales_aed,LW.net_sales_aed), orders_pct:pct(Y.orders,LW.orders)}, last_7_days:last7}}];\n"
+      },
+      "id": "64eb23da-f942-4074-8518-1da44606df0e",
+      "name": "Sales Agent (Demo data)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "notes": "Replace with Grubtech API when you have real access"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== Competitors & trends from Google News RSS =====\nconst QUERIES = {\n  \"Calo\": \"Calo UAE meal plan\",\n  \"Kcal\": \"Kcal Dubai healthy\",\n  \"Low Calories\": \"\\\"Low Calories\\\" UAE restaurant\",\n  \"Market trends\": \"healthy food delivery Dubai OR UAE meal plan trend\"\n};\nconst decode=s=>s.replace(/<!\\[CDATA\\[|\\]\\]>/g,\"\").replace(/&amp;/g,\"&\").replace(/&quot;/g,'\"').replace(/&#39;/g,\"'\").replace(/&lt;/g,\"<\").replace(/&gt;/g,\">\").trim();\nconst out={}; const cutoff=Date.now()-30*864e5;\nfor(const [name,q] of Object.entries(QUERIES)){\n  try{\n    const url=\"https://news.google.com/rss/search?q=\"+encodeURIComponent(q+\" when:30d\")+\"&hl=en-AE&gl=AE&ceid=AE:en\";\n    const xml=await this.helpers.httpRequest({url, method:\"GET\", returnFullResponse:false, json:false});\n    const items=[...String(xml).matchAll(/<item>([\\s\\S]*?)<\\/item>/g)].map(m=>{\n      const g=t=>{const r=m[1].match(new RegExp(\"<\"+t+\"[^>]*>([\\\\s\\\\S]*?)</\"+t+\">\"));return r?decode(r[1]):\"\";};\n      return {title:g(\"title\"), date:g(\"pubDate\"), source:g(\"source\"), link:g(\"link\")};\n    }).filter(i=>Date.parse(i.date)>=cutoff).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date)).slice(0,5);\n    out[name]=items;\n  }catch(e){ out[name]=[{error:String(e.message||e)}]; }\n}\nconst sales=$input.first().json;\nconst system=`You are a senior sales & marketing analyst for a healthy food delivery restaurant in Dubai.\nWrite a concise DAILY REPORT in Egyptian Arabic (casual, direct), plain text only (no markdown tables, no asterisks).\nSections, in order:\n1) ملخص امبارح: net sales, orders, avg order, change vs same day last week (with % and an up/down arrow).\n2) أحسن وأضعف منتجات.\n3) القنوات وساعات الذروة.\n4) المنافسين والسوق: summarize only the news items provided; if none, say no news this month. Never invent competitor facts.\n5) توصيتين للنهارده: specific and actionable (offer, timing, channel, product).\nKeep it under 1800 characters. Note at the end: \"البيانات تجريبية (Demo)\".`;\nconst user=\"SALES DATA:\\n\"+JSON.stringify(sales)+\"\\n\\nNEWS (last 30 days):\\n\"+JSON.stringify(out);\nreturn [{json:{sales, news:out, body:{model:\"nousresearch/hermes-4-405b\", temperature:0.4,\n  messages:[{role:\"system\",content:system},{role:\"user\",content:user}]}}}];\n"
+      },
+      "id": "f4d56ee7-e64e-4d60-88e4-c3384431a508",
+      "name": "Competitors & Trends Agent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "b0a836c5-58d3-4b0a-aa2c-a9ba1ccaa52c",
+      "name": "Write Report (OpenRouter)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const r=$input.first().json;\nconst text=(r.choices&&r.choices[0]&&r.choices[0].message&&r.choices[0].message.content)||(\"Error: \"+JSON.stringify(r).slice(0,500));\nconst s=$('Competitors & Trends Agent').first().json.sales.yesterday;\nconst subject=`التقرير اليومي ${s.date} | ${s.net_sales_aed} AED | ${s.orders} أوردر`;\nconst chunks=[];for(let i=0;i<text.length;i+=3800)chunks.push(text.slice(i,i+3800));\nreturn [{json:{subject, report:text, telegram:chunks[0], html:\"<div dir='rtl' style='font-family:Arial;font-size:15px;line-height:1.7;white-space:pre-wrap'>\"+text.replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\")+\"</div>\"}}];\n"
+      },
+      "id": "e7e1ef30-9054-443c-b6c2-6518fc0cce20",
+      "name": "Format Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "PUT_YOUR_CHAT_ID_HERE",
+        "text": "={{ $json.telegram }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "6d62f777-d61b-4dc1-a8fe-12611df237af",
+      "name": "Send to Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "sheeta.ae@gmail.com",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "e5f14bfc-eed0-445a-b4b0-91634304ce0f",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1200,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== Build dashboard data.json and prepare GitHub commit =====\nconst src=$('Competitors & Trends Agent').first().json;\nconst rep=$('Format Report').first().json;\nconst data={generated_at:new Date().toISOString(), brand:src.sales.brand, sales:src.sales, news:src.news, brief:rep.report};\nconst content=Buffer.from(JSON.stringify(data,null,1),'utf8').toString('base64');\nreturn [{json:{content, message:`daily update ${src.sales.yesterday.date}`}}];\n"
+      },
+      "id": "882e37f9-d5c7-4771-b980-d768d08dee42",
+      "name": "Build Dashboard Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.github.com/repos/YOUR_GITHUB_USERNAME/restaurant-intelligence/contents/data.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "n8n-intelligence-loop"
+            }
+          ]
+        }
+      },
+      "id": "8cc099a5-cfb6-4445-a60d-e2aa984194de",
+      "name": "GitHub · Get file SHA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://api.github.com/repos/YOUR_GITHUB_USERNAME/restaurant-intelligence/contents/data.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ message: $('Build Dashboard Data').first().json.message, content: $('Build Dashboard Data').first().json.content, sha: $json.sha }) }}",
+        "options": {},
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "n8n-intelligence-loop"
+            }
+          ]
+        }
+      },
+      "id": "f06e572f-9152-46a2-ab71-a14440b1931c",
+      "name": "GitHub · Update dashboard",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1680,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Every day 8:00 AM": {
+      "main": [
+        [
+          {
+            "node": "Sales Agent (Demo data)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sales Agent (Demo data)": {
+      "main": [
+        [
+          {
+            "node": "Competitors & Trends Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Competitors & Trends Agent": {
+      "main": [
+        [
+          {
+            "node": "Write Report (OpenRouter)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Report (OpenRouter)": {
+      "main": [
+        [
+          {
+            "node": "Format Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Report": {
+      "main": [
+        [
+          {
+            "node": "Send to Telegram",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Build Dashboard Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Dashboard Data": {
+      "main": [
+        [
+          {
+            "node": "GitHub · Get file SHA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GitHub · Get file SHA": {
+      "main": [
+        [
+          {
+            "node": "GitHub · Update dashboard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Dubai"
+  },
+  "pinData": {}
+}

@@ -1,0 +1,191 @@
+{
+ "generated_at": "2026-10-01T23:56:49.087Z",
+ "brand": "Demo Kitchen (demo data)",
+ "sales": {
+  "brand": "Demo Kitchen (demo data)",
+  "yesterday": {
+   "date": "2026-10-01",
+   "orders": 96,
+   "cancelled": 6,
+   "net_sales_aed": 5325,
+   "net_payout_aed": 4120,
+   "discounts_aed": 426,
+   "avg_order_aed": 55,
+   "top3": [
+    [
+     "Grilled Chicken Rice Bowl",
+     22
+    ],
+    [
+     "Peanut Butter Shake",
+     15
+    ],
+    [
+     "Quinoa Avocado Salad",
+     14
+    ]
+   ],
+   "bottom3": [
+    [
+     "Energy Balls",
+     3
+    ],
+    [
+     "Tuna Power Salad",
+     5
+    ],
+    [
+     "Beef Burrito Bowl",
+     6
+    ]
+   ],
+   "channels": {
+    "Talabat": 2192,
+    "Deliveroo": 1383,
+    "Careem": 694,
+    "Noon Food": 586,
+    "Direct": 470
+   },
+   "peak_hours": [
+    "13:00 (17 orders)",
+    "12:00 (12 orders)",
+    "19:00 (8 orders)"
+   ]
+  },
+  "same_day_last_week": {
+   "date": "2026-09-24",
+   "orders": 131,
+   "cancelled": 4,
+   "net_sales_aed": 7533,
+   "net_payout_aed": 5899,
+   "discounts_aed": 335,
+   "avg_order_aed": 58,
+   "top3": [
+    [
+     "Grilled Chicken Rice Bowl",
+     37
+    ],
+    [
+     "Chicken Caesar Wrap",
+     19
+    ],
+    [
+     "Greek Chicken Salad",
+     17
+    ]
+   ],
+   "bottom3": [
+    [
+     "Chicken Burger",
+     5
+    ],
+    [
+     "Egg White Omelette",
+     6
+    ],
+    [
+     "Energy Balls",
+     7
+    ]
+   ],
+   "channels": {
+    "Talabat": 3188,
+    "Deliveroo": 1642,
+    "Direct": 909,
+    "Noon Food": 906,
+    "Careem": 888
+   },
+   "peak_hours": [
+    "13:00 (22 orders)",
+    "12:00 (16 orders)",
+    "18:00 (12 orders)"
+   ]
+  },
+  "change_vs_last_week": {
+   "net_sales_pct": -29.3,
+   "orders_pct": -26.7
+  },
+  "last_7_days": [
+   {
+    "date": "2026-09-25",
+    "net": 7135,
+    "orders": 128
+   },
+   {
+    "date": "2026-09-26",
+    "net": 5727,
+    "orders": 100
+   },
+   {
+    "date": "2026-09-27",
+    "net": 7997,
+    "orders": 127
+   },
+   {
+    "date": "2026-09-28",
+    "net": 6082,
+    "orders": 96
+   },
+   {
+    "date": "2026-09-29",
+    "net": 5639,
+    "orders": 98
+   },
+   {
+    "date": "2026-09-30",
+    "net": 5711,
+    "orders": 92
+   },
+   {
+    "date": "2026-10-01",
+    "net": 5325,
+    "orders": 96
+   }
+  ]
+ },
+ "news": {
+  "Calo": [],
+  "Kcal": [
+   {
+    "title": "Shake Shack's New Milkshake Has Almost As Many Calories As The FDA Recommends Per Day - BroBible",
+    "date": "Wed, 02 Sep 2026 07:00:00 GMT",
+    "source": "BroBible",
+    "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNNnU5bFk3cTc0T0R1WllaeUI3VGpXZ2xxWnEwTENVRjNTdU1wek9kYmUxc1pJeDVCeTdHYThwcXBPY0M2ZDlkT09GczNuVmkyUGNrR0dZLWViR0FwaGgzcEJUSXJxYl9JYmh6bGMydEF2WjdXd3AyM0pXQnVxVHdWalQwZWtEYTljRnhhZzNNcmlieko5VlVrUQ?oc=5"
+   }
+  ],
+  "Low Calories": [],
+  "Market trends": [
+   {
+    "title": "“A concept can be beautiful, but it also has to work as a business”: Nathalie Haddad - Caterer Middle East",
+    "date": "Fri, 18 Sep 2026 07:00:00 GMT",
+    "source": "Caterer Middle East",
+    "link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQZlNQb3loeGpDM1lodnh6WWR6UUtMZ0NTakVNb0Q3V0tjbHpCTkZiUTBCY0w3N2ZNZnVvMzN5dGdieWhyT2Uwa3l1QUY0Ulg1SXRRZ2xqc3BsM1VpUm1TUFl4ZHdYTkZxMnlTMVBlQWV0S2RsVHpzZGt2dGtaVG5yRDlfM1YzT1RVNXpTQTIyZVBDSVp4UVlmSWJpdGlmeFNsX2xqLVVMOExqcTlkbzZMSXk4RkZlQ0FQS3RjYzFB?oc=5"
+   },
+   {
+    "title": "Telehealth-Linked Nutrition Product Market - Future Market Insights",
+    "date": "Thu, 17 Sep 2026 18:30:00 GMT",
+    "source": "Future Market Insights",
+    "link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPc2N2eDVZemE4eGhjelp1UzBQNnQzbVU1SkhkTUFmV2lmX2doQVdHbjhqbm5KUERYUHZfcll3LXZmNHZBY0NaWVN4b1lTUjFZSmM5VzNtckw0cGR2dVdUcnkzWUM4Rmh1MHVFblJzcmYwMUd4Y3ZVNGg2NU9EbFVaSGxjaGZKT2hKenF1T1FuelA?oc=5"
+   },
+   {
+    "title": "Cloud Kitchen Market Companies, Size & Trends 2026-2035 - Precedence Research",
+    "date": "Thu, 17 Sep 2026 07:00:00 GMT",
+    "source": "Precedence Research",
+    "link": "https://news.google.com/rss/articles/CBMiZkFVX3lxTFBvX095M2FxZmlsb3BIWm03cUN3dnRlNGp5ektRSzRUVldFNVNKcGZRWWFMZEJ5bUoxY2gwTjBkQ1kzdFhTWGlIWHJwWXVZMVdIbmc2MnJkWGJDTGQ0VWtDaHBRZFV3Zw?oc=5"
+   },
+   {
+    "title": "Meal Kit Delivery Services Market Size, Share | Industry [2034] - Fortune Business Insights",
+    "date": "Mon, 14 Sep 2026 07:00:00 GMT",
+    "source": "Fortune Business Insights",
+    "link": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPUExmYWNmN1JfN3ZkeFM4akhjOEJ2T3VrODduYU1GQ3ZOTTMtWlpBb0RvMEZ1RVl4MHRMOFZuWTVaLTZnVzNDcVVZRENZdWFKM1k5Vkw3S1VCVFd4N3ZHODRnSUJueHZDRFBlNi1TbFBzNDJEc2RoSl9QZDlBcEFMTm9Kd0VPTW8?oc=5"
+   },
+   {
+    "title": "Meal Replacement Market Size, Share | Forecast Report [2034] - Fortune Business Insights",
+    "date": "Mon, 14 Sep 2026 07:00:00 GMT",
+    "source": "Fortune Business Insights",
+    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9zc3pLbmlxNXdhRkZPTjZPOGpPVlp4czJOWmZaRDBob29Yc2dGdklqcTAyX3hSZko2T04zR05zMG00WHFoN0VVQV94dFFRRXU0eGs2SEM0S0tCVFlRdUtsMTFZbXY1MVJtMVZDTkNITFF1NGt3bXpIZzBR?oc=5"
+   }
+  ]
+ },
+ "brief": "صباح الخير ☀️ ده تقرير تجريبي أولي.\nأول ما n8n يشتغل الساعة 8، التقرير الحقيقي هيظهر هنا مكانه تلقائياً.\nالبيانات تجريبية (Demo)"
+}

@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-01T23:56:49.087Z",
+ "generated_at": "2026-10-02T13:34:51.096Z",
  "brand": "Demo Kitchen (demo data)",
  "sales": {
   "brand": "Demo Kitchen (demo data)",
@@ -145,14 +145,7 @@
  },
  "news": {
   "Calo": [],
-  "Kcal": [
-   {
-    "title": "Shake Shack's New Milkshake Has Almost As Many Calories As The FDA Recommends Per Day - BroBible",
-    "date": "Wed, 02 Sep 2026 07:00:00 GMT",
-    "source": "BroBible",
-    "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNNnU5bFk3cTc0T0R1WllaeUI3VGpXZ2xxWnEwTENVRjNTdU1wek9kYmUxc1pJeDVCeTdHYThwcXBPY0M2ZDlkT09GczNuVmkyUGNrR0dZLWViR0FwaGgzcEJUSXJxYl9JYmh6bGMydEF2WjdXd3AyM0pXQnVxVHdWalQwZWtEYTljRnhhZzNNcmlieko5VlVrUQ?oc=5"
-   }
-  ],
+  "Kcal": [],
   "Low Calories": [],
   "Market trends": [
    {
@@ -162,9 +155,9 @@
     "link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQZlNQb3loeGpDM1lodnh6WWR6UUtMZ0NTakVNb0Q3V0tjbHpCTkZiUTBCY0w3N2ZNZnVvMzN5dGdieWhyT2Uwa3l1QUY0Ulg1SXRRZ2xqc3BsM1VpUm1TUFl4ZHdYTkZxMnlTMVBlQWV0S2RsVHpzZGt2dGtaVG5yRDlfM1YzT1RVNXpTQTIyZVBDSVp4UVlmSWJpdGlmeFNsX2xqLVVMOExqcTlkbzZMSXk4RkZlQ0FQS3RjYzFB?oc=5"
    },
    {
-    "title": "Telehealth-Linked Nutrition Product Market - Future Market Insights",
+    "title": "Telehealth-Linked Nutrition Product Market - futuremarketinsights.com",
     "date": "Thu, 17 Sep 2026 18:30:00 GMT",
-    "source": "Future Market Insights",
+    "source": "futuremarketinsights.com",
     "link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPc2N2eDVZemE4eGhjelp1UzBQNnQzbVU1SkhkTUFmV2lmX2doQVdHbjhqbm5KUERYUHZfcll3LXZmNHZBY0NaWVN4b1lTUjFZSmM5VzNtckw0cGR2dVdUcnkzWUM4Rmh1MHVFblJzcmYwMUd4Y3ZVNGg2NU9EbFVaSGxjaGZKT2hKenF1T1FuelA?oc=5"
    },
    {
@@ -187,5 +180,5 @@
    }
   ]
  },
- "brief": "صباح الخير ☀️ ده تقرير تجريبي أولي.\nأول ما n8n يشتغل الساعة 8، التقرير الحقيقي هيظهر هنا مكانه تلقائياً.\nالبيانات تجريبية (Demo)"
+ "brief": "ملخص امبارح: \nمبيعات 5325 درهم، 96 طلب. متوسط الطلب 55 درهم. \nالتراجع مقابل نفس اليوم الأسبوع الماضي: ▼29.3% في المبيعات و ▼26.7% في الطلبات.\n\nأحسن وأضعف منتجات:\nالأفضل: \n1. صحن الأرز والدجاج المشوي (22 طلب)\n2. شيك البندق (15 طلب)\n3. سلطة الكينوا وجبة الأفوكادو (14 طلب)\nالأضعف: \n1. كرات الطاقة (3 طلبات)\n2. سلطة التونة القوية (5 طلبات)\n3. صحن البريتو باللحم (6 طلبات)\n\nالقنوات وساعات الذروة:\nالمبيعات حسب القنوات: تلبت (2192 درهم)، ديليفرو (1383 درهم)، كريم (694 درهم)، نون فود (586 درهم)، المباشر (470 درهم).\nساعات الذروة: 1 مساءا (17 طلب)، 12 ظهرا (12 طلب)، 7 مساءا (8 طلب).\n\nالمنافسين والسوق: \nأخبار السوق: \n- مقابلة مع ناتالي حداد حول مفاهيم الأعمال الناجحة في مجال الطعام (18 سبتمبر).\n- تقرير عن سوق منتجات التغذية المرتبطة بالرعاية الصحية عن بعد (17 سبتمبر).\n- توقعات نمو سوق المطابخ السحابية حتى 2035 (17 سبتمبر).\n- توقعات نمو سوق خدمات توصيل الوجبات الجاهزة حتى 2034 (14 سبتمبر).\n- توقعات نمو سوق بدائل الوجبات حتى 2034 (14 سبتمبر).\n\nتوصيتين للنهارده:\n1. طرح عرض ترويجي على صحن الأرز والدجاج المشوي عبر تطبيق تلبت في ساعة الذروة (1 مساءا) لزيادة الطلبات.\n2. إضافة عرض مخصص على سلطة الكينوا وجبة الأفوكادو عبر قنوات التواصل المباشر لجذب العملاء المهتمين بالوجبات الصحية.\n\nالبيانات تجريبية (Demo)"
 }

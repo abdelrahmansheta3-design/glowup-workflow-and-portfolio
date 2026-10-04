@@ -1,0 +1,357 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Restaurant Intelligence Loop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+/* Layout: one portrait system map (sources → agents → synthesis → delivery → human → loop), execution log + live brief beside it on wide screens, stacked on phones. Single deliberate dark look. */
+:root{
+  --ink:#090E1A; --ink-2:#0E1524; --panel:#111A2C; --line:#1F2B42; --line-2:#2A3956;
+  --text:#DCE4F2; --muted:#8190AB; --faint:#55627C;
+  --sky:#74B6FF; --teal:#5FD4C4; --lilac:#AE9FFF; --amber:#F1B46A; --rose:#F08BA0;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --arabic:"IBM Plex Sans Arabic",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--ink);color:var(--text)}
+body{font-family:var(--display);padding-inline:16px;padding-block:28px 48px;
+  background:radial-gradient(1200px 700px at 50% -10%,#14203a 0%,transparent 60%),var(--ink)}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 32px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);display:flex;gap:10px;align-items:center}
+.eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal);display:inline-block;animation:pulse 2.4s ease-in-out infinite}
+h1{font-size:clamp(30px,5vw,52px);line-height:1.02;margin:10px 0 8px;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--sky),var(--teal) 45%,var(--lilac));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:16px;max-width:60ch;line-height:1.55;margin:0}
+.levels{display:flex;flex-wrap:wrap;gap:8px}
+.lv{font-family:var(--mono);font-size:11.5px;padding:7px 10px;border:1px solid var(--line-2);border-radius:999px;color:var(--muted);display:flex;gap:7px;align-items:center;background:var(--ink-2)}
+.lv b{font-weight:500;color:var(--text)}
+.lv.on{border-color:color-mix(in srgb,var(--teal) 55%,var(--line-2));color:var(--text)}
+.lv.on::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal)}
+.grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:920px){.grid{grid-template-columns:minmax(0,1fr)}}
+.map{border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,var(--ink-2),var(--ink));position:relative;overflow:hidden}
+.map-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.map svg{display:block;width:100%;min-width:540px;height:auto}
+.map-bar{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend span::before{content:"";width:16px;height:2px;border-radius:2px;background:var(--c);box-shadow:0 0 6px var(--c)}
+button.run{font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;color:var(--ink);background:var(--teal);border:0;border-radius:10px;padding:10px 14px;cursor:pointer;display:flex;gap:8px;align-items:center;box-shadow:0 0 0 1px color-mix(in srgb,var(--teal) 40%,transparent),0 6px 24px -6px color-mix(in srgb,var(--teal) 70%,transparent)}
+button.run:hover{filter:brightness(1.08)}
+button.run:focus-visible,.node:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+button.run[disabled]{opacity:.6;cursor:progress}
+aside{display:flex;flex-direction:column;gap:18px;min-width:0}
+.card{border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}
+.card h2{font-family:var(--mono);font-weight:500;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0;padding:12px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}
+.card h2 small{color:var(--faint);letter-spacing:.06em}
+.log{font-family:var(--mono);font-size:12px;line-height:1.75;padding:12px 16px;min-height:236px;max-height:300px;overflow:auto;font-variant-numeric:tabular-nums}
+.log div{display:grid;grid-template-columns:62px 78px minmax(0,1fr);gap:8px;animation:in .35s ease-out both}
+.log .t{color:var(--faint)} .log .who{color:var(--c,var(--muted))} .log .msg{color:var(--text);overflow-wrap:anywhere}
+.log .ok{color:var(--teal)}
+.detail{padding:16px;display:flex;flex-direction:column;gap:10px}
+.detail .k{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--c,var(--teal))}
+.detail h3{margin:0;font-size:22px;font-weight:600;letter-spacing:-.01em}
+.detail p{margin:0;color:var(--muted);line-height:1.55;font-size:14.5px}
+.detail ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:12px;color:var(--text)}
+.detail li{display:flex;gap:8px}.detail li::before{content:"›";color:var(--c,var(--teal))}
+.tg{padding:16px;background:
+  radial-gradient(circle at 20% 0%,#16243d 0,transparent 55%),#0D1424}
+.bubble{direction:rtl;font-family:var(--arabic);font-size:14px;line-height:1.85;background:#16223A;border:1px solid var(--line-2);border-radius:16px 16px 4px 16px;padding:12px 14px;white-space:pre-line;color:var(--text);max-width:100%}
+.bubble .num{font-family:var(--mono);direction:ltr;unicode-bidi:isolate}
+.bmeta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:8px}
+.tg.flash .bubble{animation:in .6s ease-out both}
+footer{font-family:var(--mono);font-size:11.5px;color:var(--faint);display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:920px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:14px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.kpi .lab{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.kpi .val{font-size:30px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.kpi .val small{font-size:14px;color:var(--muted);font-weight:400;margin-inline-start:4px}
+.kpi .d{font-family:var(--mono);font-size:12px}
+.down{color:var(--rose)}.flat{color:var(--muted)}
+.bars{display:flex;align-items:flex-end;gap:5px;height:44px;margin-top:2px}
+.bars span{flex:1;border-radius:3px 3px 1px 1px;background:color-mix(in srgb,var(--teal) 35%,transparent);position:relative}
+.bars span.last{background:var(--teal);box-shadow:0 0 12px -2px var(--teal)}
+.bx{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+.pill{font-family:var(--mono);font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid var(--line-2);color:var(--muted)}
+/* svg */
+.edge-base{fill:none;stroke-width:1.4;opacity:.28}
+.edge-flow{fill:none;stroke-width:2.2;stroke-linecap:round;stroke-dasharray:6 18;animation:flow 1.6s linear infinite;opacity:.75;filter:url(#glow)}
+.edge.hot .edge-flow{stroke-width:3.2;opacity:1;animation-duration:.6s}
+.edge.hot .edge-base{opacity:.6}
+.edge.dim{opacity:.18}
+.edge.loop .edge-flow{stroke-dasharray:3 12;animation-duration:2.6s}
+.node{cursor:pointer;transition:opacity .25s}
+.node rect.box{fill:var(--panel);stroke-width:1.2;transition:stroke-width .2s,filter .2s}
+.node .halo{fill:none;stroke-width:8;opacity:0;transition:opacity .3s}
+.node:hover .halo,.node.sel .halo{opacity:.22}
+.node.lit .halo{opacity:.5;animation:pulse 1.2s ease-in-out infinite}
+.node.dim{opacity:.35}
+.svg-t{font-family:var(--display);font-weight:600;fill:var(--text)}
+.svg-s{font-family:var(--mono);fill:var(--muted)}
+.svg-k{font-family:var(--mono);letter-spacing:.12em}
+.tagbg{fill:var(--ink)}
+.zone{fill:none;stroke:var(--line-2);stroke-dasharray:3 6}
+.zone-l{font-family:var(--mono);font-size:11px;letter-spacing:.16em;fill:var(--faint)}
+@keyframes flow{to{stroke-dashoffset:-24}}
+@keyframes pulse{50%{opacity:.25}}
+@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.edge-flow,.eyebrow i,.node.lit .halo{animation:none}.log div,.tg.flash .bubble{animation:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow"><i></i>Live system · runs every morning · Asia/Dubai</div>
+      <h1>Restaurant <em>Intelligence Loop</em></h1>
+      <p class="sub">Three agents read sales, the market and social every morning, one model turns it into a decision brief, and tomorrow's numbers measure whether the decision worked.</p>
+    </div>
+    <div class="levels" aria-label="Agentic levels used">
+      <span class="lv on"><b>L3</b> tool calling</span>
+      <span class="lv on"><b>L4</b> multi-agent</span>
+      <span class="lv on"><b>L5</b> guardrails</span>
+      <span class="lv on"><b>L6</b> closed loop</span>
+    </div>
+  </header>
+
+  <section class="kpis" aria-label="Yesterday at a glance">
+    <div class="kpi"><div class="lab">Net sales · Thu 1 Oct <span class="pill">demo</span></div><div class="val">5,325<small>AED</small></div><div class="d down">↓ 29.3% vs Thu 24 Sep</div></div>
+    <div class="kpi"><div class="lab">Orders</div><div class="val">96</div><div class="d down">↓ 26.7% · avg order 55 AED</div></div>
+    <div class="kpi"><div class="lab">Last 7 days <span>43,616 AED</span></div>
+      <div class="bars" id="bars" role="img" aria-label="Net sales by day, 25 Sep to 1 Oct"></div>
+      <div class="bx"><span>Fri 25</span><span>Thu 1</span></div></div>
+    <div class="kpi"><div class="lab">Market · Social</div><div class="val" style="font-size:20px;line-height:1.35">0 competitor moves<br><span style="color:var(--muted);font-size:15px;font-weight:400">TikTok · building baseline</span></div><div class="d flat">30-day news window</div></div>
+  </section>
+
+  <div class="grid">
+    <section class="map" aria-label="System map">
+      <div class="map-bar">
+        <div class="legend">
+          <span style="--c:var(--sky)">data</span>
+          <span style="--c:var(--teal)">agents</span>
+          <span style="--c:var(--lilac)">model</span>
+          <span style="--c:var(--amber)">human loop</span>
+        </div>
+        <button class="run" id="run" type="button">▶ Run today's brief</button>
+      </div>
+      <div class="map-scroll"><svg id="svg" viewBox="0 0 720 1140" role="img" aria-labelledby="svgt svgd">
+        <title id="svgt">Restaurant Intelligence Loop system map</title>
+        <desc id="svgd">A schedule triggers four data sources, which feed a sales agent, a competitors and trends agent, and a social agent. The first two feed a report-writing model that sends a brief to Telegram and email. The social agent emails and drafts posts. The owner acts, and tomorrow's sales close the loop.</desc>
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+          <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#1A2540"/></pattern>
+        </defs>
+        <rect width="720" height="1140" fill="url(#dots)"/>
+        <g id="zones"></g>
+        <g id="edges"></g>
+        <g id="nodes"></g>
+      </svg></div>
+    </section>
+
+    <aside>
+      <div class="card">
+        <h2>Execution log <small id="clock">idle · last run 08:00</small></h2>
+        <div class="log" id="log" aria-live="polite"></div>
+      </div>
+      <div class="card" id="detail" style="--c:var(--teal)">
+        <h2>Inspector <small>tap any node</small></h2>
+        <div class="detail" id="detailBody"></div>
+      </div>
+      <div class="card tg" id="tg">
+        <h2 style="margin:-16px -16px 14px;padding:12px 16px">Delivered brief · Telegram <small>example</small></h2>
+        <div class="bubble">صباح الخير ☀️ تقرير الخميس <span class="num">1 Oct</span>
+📉 المبيعات: <span class="num">5,325 AED</span> من <span class="num">96</span> أوردر (↓<span class="num">29%</span> عن الخميس اللي فات)
+متوسط الأوردر <span class="num">55 AED</span>
+🔥 الأقوى: Grilled Chicken Rice Bowl (<span class="num">22</span>) · Peanut Butter Shake (<span class="num">15</span>)
+🧊 الأضعف: Energy Balls (<span class="num">3</span>)
+⏰ الذروة الساعة <span class="num">1</span> الضهر · Talabat أكبر قناة (<span class="num">41%</span>)
+🕵️ المنافسين: مفيش أخبار جديدة عن Calo وKcal وLow Calories آخر <span class="num">30</span> يوم
+✅ النهارده:
+<span class="num">1)</span> عرض غدا على Talabat من <span class="num">12</span> لـ <span class="num">2</span>
+<span class="num">2)</span> Bundle: Rice Bowl + Energy Balls عشان نحرّك الأضعف
+البيانات تجريبية (Demo)</div>
+        <div class="bmeta"><span>Intelligence Bot</span><span>08:00 ✓✓</span></div>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <span>Built by Abd Elrahman · n8n · OpenRouter (Hermes 4 405B) · Claude + Metricool · Telegram · Gmail</span>
+    <span>Sales figures are demo data generated for this build</span>
+  </footer>
+</div>
+
+<script>
+(()=>{
+const B=[7135,5727,7997,6082,5639,5711,5325],bx=document.getElementById("bars"),mx=Math.max(...B);
+B.forEach((v,i)=>{const sp=document.createElement("span");sp.style.height=(v/mx*100)+"%";sp.title=v.toLocaleString()+" AED";if(i===B.length-1)sp.className="last";bx.appendChild(sp)});
+const C={sky:"#74B6FF",teal:"#5FD4C4",lilac:"#AE9FFF",amber:"#F1B46A",rose:"#F08BA0"};
+const NS="http://www.w3.org/2000/svg";
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+
+// ---- nodes: cx, cy, w, h ----
+const N={
+ trigger:{x:360,y:72,w:380,h:78,c:C.amber,k:"SCHEDULE",t:"Morning trigger",s:"07:45 social · 08:00 sales + market",tag:"cron",stage:0,
+   d:"Two clocks start the day. Claude runs the social agent at 07:45; n8n fires the main workflow at 08:00 Dubai time.",
+   l:["n8n Schedule · cron 0 8 * * *","Claude scheduled task · 45 7 * * *","timezone Asia/Dubai"]},
+ sales:{x:95,y:232,w:150,h:78,c:C.sky,k:"SOURCE",t:"Sales feed",s:"Grubtech-ready",tag:"demo",stage:1,
+   d:"Order-level sales: channel, item, hour, discount, commission. Running on generated demo data shaped like a Grubtech export, swappable for the real API.",
+   l:["5 channels · 18 items","~18k orders / 6 months","commission per platform"]},
+ watch:{x:265,y:232,w:150,h:78,c:C.sky,k:"SOURCE",t:"Watchlist",s:"3 competitors",tag:"config",stage:1,
+   d:"The competitor set the market agent tracks.",l:["@calo.uae","@kcal.life","@lowcaloriesae"]},
+ news:{x:455,y:232,w:150,h:78,c:C.sky,k:"SOURCE",t:"News feeds",s:"Google News · 30d",tag:"rss",stage:1,
+   d:"Four news queries per run: one per competitor plus the UAE healthy-food market, filtered to the last 30 days.",
+   l:["4 queries / run","30-day window","dated + sourced items only"]},
+ metri:{x:625,y:232,w:150,h:78,c:C.sky,k:"SOURCE",t:"Metricool",s:"TikTok analytics",tag:"mcp",stage:1,
+   d:"Social analytics read through Metricool's MCP connection: reach, engagement and best time to post.",
+   l:["read-only access","best-time-to-post","drafts for approval"]},
+ aSales:{x:125,y:452,w:210,h:152,c:C.teal,k:"AGENT 01",t:"Sales Agent",tag:"n8n",stage:2,
+   m:["Δ vs same day last week","top 3 · bottom 3 items","channel mix · peak hours","7-day trend line"],
+   d:"Computes yesterday against the same weekday last week, so a Thursday is never compared with a Monday.",
+   l:["input: order lines","output: KPI JSON","deterministic, no LLM"]},
+ aMarket:{x:360,y:452,w:210,h:152,c:C.teal,k:"AGENT 02",t:"Market Agent",tag:"n8n",stage:2,
+   m:["competitor mentions","offers · launches","market headlines","de-dup + date filter"],
+   d:"Collects what the competitors and the market did. Returns only real, dated items; an empty week is reported as empty.",
+   l:["input: watchlist + feeds","output: news JSON","no invented facts"]},
+ aSocial:{x:595,y:452,w:210,h:152,c:C.teal,k:"AGENT 03",t:"Social Agent",tag:"claude",stage:2,
+   m:["reach vs 7-day avg","best post","best time today","one content idea"],
+   d:"Claude reads Metricool every morning, writes a short social summary and can stage posts as drafts. It never publishes on its own.",
+   l:["runs 07:45","read + draft only","email summary"]},
+ synth:{x:360,y:692,w:400,h:124,c:C.lilac,k:"SYNTHESIS",t:"Brief writer",s:"Hermes 4 405B · OpenRouter",tag:"llm",stage:3,
+   chips:["≤1800 chars","Egyptian Arabic","facts only","2 actions"],
+   d:"One model call merges both agents into a brief a manager reads in a minute. The prompt forbids invented competitor facts and asks for two concrete actions.",
+   l:["temperature 0.4","system-prompt guardrails","falls back to raw error text"]},
+ tg:{x:130,y:902,w:190,h:76,c:C.teal,k:"DELIVER",t:"Telegram",s:"08:00 push",tag:"bot",stage:4,
+   d:"The brief lands as a phone notification at 08:00.",l:["Bot API","plain text","chunked at 3.8k chars"]},
+ mail:{x:360,y:902,w:190,h:76,c:C.teal,k:"DELIVER",t:"Email",s:"HTML · RTL",tag:"gmail",stage:4,
+   d:"The same brief as a right-to-left HTML email, plus the social summary at 07:45.",l:["Gmail","subject carries the KPI","archive by date"]},
+ drafts:{x:590,y:902,w:190,h:76,c:C.amber,k:"APPROVE",t:"Post drafts",s:"waits for you",tag:"review",stage:4,
+   d:"Suggested posts wait in Metricool until a human approves them.",l:["human in the loop","nothing auto-posts"]},
+ you:{x:360,y:1070,w:310,h:84,c:C.amber,k:"DECIDE",t:"You act on 2 actions",s:"offer · timing · channel",tag:"human",stage:5,
+   d:"The only step that is not automated, on purpose. The decision goes live today, and tomorrow's sales agent measures it.",
+   l:["approve / skip","tomorrow = measurement","loop closes"]},
+};
+// ---- edges ----
+const E=[
+ ["trigger","sales","M300 111 C300 150 95 150 95 193",C.amber,1],
+ ["trigger","watch","M340 111 C340 150 265 150 265 193",C.amber,1],
+ ["trigger","news","M380 111 C380 150 455 150 455 193",C.amber,1],
+ ["trigger","metri","M420 111 C420 150 625 150 625 193",C.amber,1],
+ ["sales","aSales","M95 271 C95 320 125 330 125 376",C.sky,2],
+ ["watch","aMarket","M265 271 C265 325 340 330 340 376",C.sky,2],
+ ["news","aMarket","M455 271 C455 325 380 330 380 376",C.sky,2],
+ ["metri","aSocial","M625 271 C625 320 595 330 595 376",C.sky,2],
+ ["aSales","synth","M125 528 C125 590 250 590 250 630",C.teal,3],
+ ["aMarket","synth","M360 528 L360 630",C.teal,3],
+ ["aSocial","mail","M595 528 L595 790 Q595 812 573 812 L412 812 Q395 812 395 830 L395 864",C.teal,4],
+ ["aSocial","drafts","M640 528 C640 700 600 780 600 864",C.amber,4],
+ ["synth","tg","M270 754 C270 810 130 810 130 864",C.lilac,4],
+ ["synth","mail","M340 754 L340 864",C.lilac,4],
+ ["tg","you","M130 940 C130 1000 255 990 255 1028",C.teal,5],
+ ["mail","you","M360 940 L360 1028",C.teal,5],
+ ["drafts","you","M590 940 C590 1000 465 990 465 1028",C.amber,5],
+ ["you","sales","M205 1070 C70 1070 10 1040 10 960 L10 300 C10 250 14 232 20 232",C.amber,6,"loop"],
+];
+
+const zones=document.getElementById("zones"),eg=document.getElementById("edges"),ng=document.getElementById("nodes");
+const zoneDef=[[10,184,700,96,"INPUTS"],[10,368,700,172,"AGENTS"],[150,622,420,140,"REASONING"],[25,856,670,92,"DELIVERY"]];
+zoneDef.forEach(([x,y,w,h,l])=>{el("rect",{x,y,width:w,height:h,rx:14,class:"zone"},zones);const t=el("text",{x:x+w-12,y:y-8,"text-anchor":"end",class:"zone-l"},zones);t.textContent=l});
+const loopLbl=el("text",{x:22,y:640,class:"zone-l",transform:"rotate(-90 22 640)","text-anchor":"middle",fill:C.amber,style:"fill:"+C.amber+";opacity:.8"},zones);loopLbl.textContent="FEEDBACK · TOMORROW MEASURES TODAY";
+
+const edgeEls=[];
+E.forEach(([a,b,d,col,stage,kind],i)=>{
+  const g=el("g",{class:"edge"+(kind?" "+kind:"")},eg);g.dataset.a=a;g.dataset.b=b;g.dataset.stage=stage;
+  el("path",{d,class:"edge-base",stroke:col},g);
+  const id="p"+i;el("path",{d,id,class:"edge-flow",stroke:col},g);
+  for(let j=0;j<2;j++){const c=el("circle",{r:kind?2.6:3.1,fill:col,filter:"url(#glow)"},g);
+    const am=el("animateMotion",{dur:(kind?5.5:2.6+(i%4)*.35)+"s",repeatCount:"indefinite",begin:(j*1.3+(i%5)*.2)+"s",rotate:"auto"},c);
+    el("mpath",{href:"#"+id},am);}
+  edgeEls.push(g);
+});
+
+const nodeEls={};
+for(const [id,n] of Object.entries(N)){
+  const x=n.x-n.w/2,y=n.y-n.h/2;
+  const g=el("g",{class:"node",tabindex:0,role:"button","aria-label":n.t},ng);g.dataset.id=id;g.dataset.stage=n.stage;
+  el("rect",{x:x-4,y:y-4,width:n.w+8,height:n.h+8,rx:16,class:"halo",stroke:n.c},g);
+  el("rect",{x,y,width:n.w,height:n.h,rx:12,class:"box",stroke:n.c,"stroke-opacity":.7},g);
+  el("rect",{x:x+1,y:y+1,width:3,height:n.h-2,rx:1.5,fill:n.c,opacity:.0},g);
+  const k=el("text",{x:x+14,y:y+20,class:"svg-k","font-size":10.5,fill:n.c},g);k.textContent=n.k;
+  // tag chip
+  const tw=n.tag.length*6.6+14;
+  el("rect",{x:x+n.w-tw-10,y:y+9,width:tw,height:17,rx:8.5,class:"tagbg",stroke:n.c,"stroke-opacity":.45},g);
+  const tt=el("text",{x:x+n.w-10-tw/2,y:y+21,"text-anchor":"middle",class:"svg-s","font-size":10},g);tt.textContent=n.tag;
+  const t=el("text",{x:x+14,y:y+(n.m?44:44),class:"svg-t","font-size":n.m||n.chips?19:17},g);t.textContent=n.t;
+  if(n.s){const s=el("text",{x:x+14,y:y+n.h-14,class:"svg-s","font-size":11.5},g);s.textContent=n.s}
+  if(n.m){n.m.forEach((m,i)=>{const yy=y+70+i*20;el("circle",{cx:x+18,cy:yy-4,r:2.2,fill:n.c,opacity:.8},g);const s=el("text",{x:x+28,y:yy,class:"svg-s","font-size":11.5},g);s.textContent=m})}
+  if(n.chips){let cx=x+14;n.chips.forEach(c=>{const w=c.length*6.4+16;el("rect",{x:cx,y:y+84,width:w,height:22,rx:6,fill:"none",stroke:n.c,"stroke-opacity":.45},g);const s=el("text",{x:cx+w/2,y:y+99,"text-anchor":"middle",class:"svg-s","font-size":10.5,fill:n.c},g);s.textContent=c;cx+=w+7})}
+  nodeEls[id]=g;
+  const pick=()=>select(id);
+  g.addEventListener("click",pick);
+  g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick()}});
+  g.addEventListener("mouseenter",()=>focusOn(id));g.addEventListener("mouseleave",()=>focusOn(null));
+}
+
+function focusOn(id){
+  edgeEls.forEach(e=>{const on=!id||e.dataset.a===id||e.dataset.b===id;e.classList.toggle("dim",!on);e.classList.toggle("hot",!!id&&on)});
+  if(!running) for(const [k,g] of Object.entries(nodeEls)){const linked=!id||k===id||E.some(([a,b])=>(a===id&&b===k)||(b===id&&a===k));g.classList.toggle("dim",!linked)}
+}
+const body=document.getElementById("detailBody"),card=document.getElementById("detail");
+function select(id){
+  const n=N[id];Object.values(nodeEls).forEach(g=>g.classList.remove("sel"));nodeEls[id].classList.add("sel");
+  card.style.setProperty("--c",n.c);
+  body.innerHTML="";
+  const k=document.createElement("div");k.className="k";k.textContent=n.k+" · "+n.tag;
+  const h=document.createElement("h3");h.textContent=n.t;
+  const p=document.createElement("p");p.textContent=n.d;
+  const ul=document.createElement("ul");n.l.forEach(x=>{const li=document.createElement("li");li.textContent=x;ul.appendChild(li)});
+  body.append(k,h,p,ul);
+}
+select("synth");
+
+// ---- run simulation ----
+const LOG=[
+ [0,"07:45:00","scheduler",C.amber,"social agent woke up"],
+ [1,"07:45:03","social",C.teal,"metricool · tiktok connected · baseline week"],
+ [2,"07:45:09","social",C.teal,"summary + 1 content idea → inbox"],
+ [0,"08:00:00","n8n",C.amber,"workflow fired · Daily Restaurant Report"],
+ [1,"08:00:01","sources",C.sky,"order feed · 4 news queries · watchlist(3)"],
+ [2,"08:00:01","sales",C.teal,"96 orders · AED 5,325 · Δ −29.3% vs Thu 24 Sep"],
+ [2,"08:00:02","sales",C.teal,"top Rice Bowl ×22 · peak 13:00 · Talabat 41%"],
+ [2,"08:00:04","market",C.teal,"Calo 0 · Kcal 0 · LowCal 0 · market 5 (30d)"],
+ [3,"08:00:05","hermes-4",C.lilac,"writing brief · guardrails on"],
+ [3,"08:00:11","hermes-4",C.lilac,"<span class=ok>✓</span> no invented facts · 2 actions"],
+ [4,"08:00:12","telegram",C.teal,"<span class=ok>✓</span> delivered"],
+ [4,"08:00:12","gmail",C.teal,"<span class=ok>✓</span> delivered · RTL html"],
+ [5,"08:00:12","you",C.amber,"awaiting decision: lunch offer · bundle"],
+ [6,"tomorrow","loop",C.amber,"sales agent measures today's decision"],
+];
+const logEl=document.getElementById("log"),clock=document.getElementById("clock"),runBtn=document.getElementById("run"),tg=document.getElementById("tg");
+function addLine([s,t,who,c,msg]){const d=document.createElement("div");d.innerHTML=`<span class="t">${t}</span><span class="who" style="--c:${c}">${who}</span><span class="msg">${msg}</span>`;logEl.appendChild(d);logEl.scrollTop=logEl.scrollHeight}
+LOG.forEach(addLine); // complete at rest: show last run
+let running=false;
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+if(reduce){try{document.getElementById("svg").pauseAnimations()}catch(e){}}
+const wait=ms=>new Promise(r=>setTimeout(r,reduce?0:ms));
+runBtn.addEventListener("click",async()=>{
+  if(running)return;running=true;runBtn.disabled=true;runBtn.textContent="● running…";logEl.innerHTML="";clock.textContent="running";
+  Object.values(nodeEls).forEach(g=>g.classList.add("dim"));edgeEls.forEach(e=>e.classList.add("dim"));
+  for(let st=0;st<=6;st++){
+    Object.values(nodeEls).forEach(g=>{if(+g.dataset.stage===st){g.classList.remove("dim");g.classList.add("lit")}});
+    edgeEls.forEach(e=>{if(+e.dataset.stage===st+1||(st===6&&+e.dataset.stage===6)){e.classList.remove("dim");e.classList.add("hot")}});
+    for(const line of LOG.filter(l=>l[0]===st)){addLine(line);await wait(380)}
+    if(st===4){tg.classList.remove("flash");void tg.offsetWidth;tg.classList.add("flash")}
+    await wait(520);
+    Object.values(nodeEls).forEach(g=>{if(+g.dataset.stage===st)g.classList.remove("lit")});
+  }
+  await wait(900);
+  edgeEls.forEach(e=>e.classList.remove("dim","hot"));Object.values(nodeEls).forEach(g=>g.classList.remove("dim","lit"));
+  clock.textContent="✓ completed · 12s";runBtn.disabled=false;runBtn.textContent="▶ Run again";running=false;
+});
+})();
+</script>
+
+</body></html>

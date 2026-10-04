@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>EAT & TRACK</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a1628 0%, #1a2d4a 50%, #0f1f35 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: max(1.5rem, calc(env(safe-area-inset-top) + 1rem)) 1rem max(2rem, calc(env(safe-area-inset-bottom) + 1rem)) 1rem;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .card {
+            background: rgba(20, 29, 50, 0.9);
+            border: 1px solid rgba(20, 184, 166, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #10b981;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 0.85rem;
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            color: #fff;
+            font-size: 16px;
+            font-family: inherit;
+            margin-bottom: 0.75rem;
+        }
+
+        input::placeholder {
+            color: #64748b;
+        }
+
+        button {
+            background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button:active {
+            opacity: 0.8;
+        }
+
+        .goal-setter {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .goal-setter input {
+            margin-bottom: 0;
+        }
+
+        .dropdown {
+            position: relative;
+            margin-bottom: 0.75rem;
+        }
+
+        .dropdown-btn {
+            width: 100%;
+            text-align: right;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            border-radius: 12px;
+            max-height: 60vh;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .search-box {
+            padding: 0.75rem;
+            border-bottom: 1px solid rgba(20, 184, 166, 0.2);
+            position: sticky;
+            top: 0;
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        .search-box input {
+            margin-bottom: 0;
+            font-size: 14px;
+            padding: 0.6rem;
+        }
+
+        .dropdown-group {
+            border-bottom: 1px solid rgba(20, 184, 166, 0.1);
+        }
+
+        .dropdown-label {
+            padding: 0.75rem 1rem;
+            font-size: 0.75rem;
+            color: #10b981;
+            font-weight: 700;
+            background: rgba(15, 23, 42, 0.95);
+            position: sticky;
+            top: 45px;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            color: #cbd5e1;
+            cursor: pointer;
+            text-align: right;
+        }
+
+        .dropdown-item:active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .dropdown-item.hidden {
+            display: none;
+        }
+
+        .info {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .stat {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #cbd5e1;
+        }
+
+        .meal {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(20, 184, 166, 0.15);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .meal-info {
+            flex: 1;
+        }
+
+        .meal-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .meal-cal {
+            font-size: 0.8rem;
+            color: #10b981;
+        }
+
+        .meal-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: none !important;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-bottom: 0;
+            margin-left: 0.5rem;
+            width: auto;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.08);
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-label {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            margin-bottom: 0.25rem;
+        }
+
+        .summary-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #14b8a6;
+        }
+
+        .percent {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid rgba(20, 184, 166, 0.1);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.75rem;
+            background: none;
+            border: none !important;
+            color: #64748b;
+            border-bottom: 3px solid transparent;
+            margin-bottom: 0;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active {
+            color: #10b981;
+            border-bottom-color: #10b981;
+        }
+
+        .tab {
+            display: none;
+        }
+
+        .tab.active {
+            display: block;
+        }
+
+        .empty {
+            text-align: center;
+            color: #64748b;
+            padding: 2rem 1rem;
+        }
+
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(148, 163, 184, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0.75rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981 0%, #14b8a6 100%);
+            transition: width 0.3s ease;
+        }
+
+        .progress-bar.warning {
+            background: linear-gradient(90deg, #f59e0b 0%, #f97316 100%);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .grid-2 input {
+            margin-bottom: 0;
+        }
+
+        .history-item {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(20, 184, 166, 0.15);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .history-date {
+            font-weight: 600;
+            color: #14b8a6;
+        }
+
+        .history-cal {
+            font-weight: 700;
+            color: #10b981;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍽️ EAT & TRACK</h1>
+
+        <div class="card">
+            <div class="goal-setter">
+                <div>
+                    <label style="font-size: 0.8rem; color: #94a3b8;">الهدف اليومي</label>
+                    <input type="number" id="goalInput" value="1800" inputmode="decimal">
+                </div>
+                <div>
+                    <label style="font-size: 0.8rem; color: #94a3b8;">التاريخ</label>
+                    <input type="date" id="dateInput">
+                </div>
+            </div>
+            <button onclick="updateGoal()">تحديث الهدف</button>
+        </div>
+
+        <div class="card">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('today')">📅 اليوم</button>
+                <button class="tab-btn" onclick="switchTab('history')">📊 السجل</button>
+            </div>
+
+            <div id="today" class="tab active">
+                <div style="background: rgba(16, 185, 129, 0.08); padding: 1rem; border-radius: 12px; margin-bottom: 1rem;">
+                    <div class="card-title">➕ أضيف طعام</div>
+                    
+                    <div class="dropdown">
+                        <button class="dropdown-btn" id="foodBtn" onclick="toggleDropdown()">
+                            <span>▼</span>
+                            <span id="foodText">اختر من القائمة</span>
+                        </button>
+                        <div class="dropdown-content" id="foodDropdown">
+                            <div class="search-box">
+                                <input type="text" id="searchBox" placeholder="ابحث عن الطعام..." onkeyup="filterFoods()">
+                            </div>
+                            <div id="foodList"></div>
+                        </div>
+                    </div>
+
+                    <div id="foodInfo" class="info" style="display:none;"></div>
+
+                    <input type="number" id="grams" placeholder="الكمية بالجرام (مثال: 150)" inputmode="decimal">
+                    <button onclick="addMeal()">✓ أضيف</button>
+                    <button onclick="toggleManual()" style="background: rgba(20, 184, 166, 0.1); color: #14b8a6;">✎ إدخال يدوي</button>
+                </div>
+
+                <div id="manualSection" style="display:none; background: rgba(16, 185, 129, 0.08); padding: 1rem; border-radius: 12px; margin-bottom: 1rem;">
+                    <div class="card-title">✏️ إدخال مخصص</div>
+                    <input type="text" id="manualName" placeholder="اسم الطعام">
+                    <div class="grid-2">
+                        <input type="number" id="manualCal" placeholder="السعرات" inputmode="decimal">
+                        <input type="number" id="manualPro" placeholder="بروتين (ج)" inputmode="decimal">
+                    </div>
+                    <div class="grid-2">
+                        <input type="number" id="manualCarb" placeholder="كاربو (ج)" inputmode="decimal">
+                        <input type="number" id="manualFat" placeholder="دهون (ج)" inputmode="decimal">
+                    </div>
+                    <div class="grid-2">
+                        <input type="number" id="manualSugar" placeholder="سكريات (ج)" inputmode="decimal">
+                        <input type="number" id="manualFiber" placeholder="ألياف (ج)" inputmode="decimal">
+                    </div>
+                    <button onclick="addManual()">✓ أضيف</button>
+                </div>
+
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value" id="totalCal">0</div>
+                        <div class="stat-label">السعرات</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="remaining">1800</div>
+                        <div class="stat-label">المتبقي</div>
+                    </div>
+                </div>
+
+                <div style="font-size:0.85rem; margin-bottom:0.5rem;">
+                    <span>التقدم:</span>
+                    <span id="percent" style="float:left;">0%</span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" id="progBar" style="width:0%"></div>
+                </div>
+
+                <div class="card-title">📝 الوجبات</div>
+                <div id="mealsList"></div>
+
+                <div class="summary" id="summary" style="display:none;"></div>
+            </div>
+
+            <div id="history" class="tab">
+                <div class="card-title">📋 السجل</div>
+                <div id="historyList"></div>
+                <button onclick="exportData()">📥 تحميل CSV</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const FOODS = {
+            '🍗 الدواجن': {
+                'صدور فراخ مشوية': { cal: 165, pro: 31, carb: 0, fat: 3.6, sugar: 0, fiber: 0 },
+                'صدور فراخ بزيت الزيتون': { cal: 240, pro: 32, carb: 0, fat: 12, sugar: 0, fiber: 0 },
+                'دجاج مقلي': { cal: 320, pro: 30, carb: 0, fat: 17, sugar: 0, fiber: 0 },
+            },
+            '🥩 اللحوم': {
+                'لحم بقري': { cal: 250, pro: 26, carb: 0, fat: 15, sugar: 0, fiber: 0 },
+                'لحم بوفتيك': { cal: 190, pro: 22, carb: 2, fat: 10, sugar: 0, fiber: 0 },
+                'تندرلوين': { cal: 190, pro: 26, carb: 0, fat: 9, sugar: 0, fiber: 0 },
+                'فشة': { cal: 190, pro: 20, carb: 0, fat: 11, sugar: 0, fiber: 0 },
+                'كبدة': { cal: 135, pro: 21, carb: 4, fat: 5, sugar: 0, fiber: 0 },
+            },
+            '🐟 السمك': {
+                'سمك سلمون': { cal: 208, pro: 20, carb: 0, fat: 13, sugar: 0, fiber: 0 },
+                'سمك تونة': { cal: 144, pro: 30, carb: 0, fat: 1, sugar: 0, fiber: 0 },
+                'سمك أبيض (بلطي)': { cal: 82, pro: 18, carb: 0, fat: 0.7, sugar: 0, fiber: 0 },
+            },
+            '🥛 الألبان': {
+                'حليب كامل الدسم': { cal: 61, pro: 3.2, carb: 4.8, fat: 3.3, sugar: 4.8, fiber: 0 },
+                'لبن حليب مكثف': { cal: 330, pro: 8, carb: 55, fat: 8, sugar: 45, fiber: 0 },
+                'زبادي يوناني': { cal: 59, pro: 10, carb: 3.3, fat: 0.4, sugar: 3.3, fiber: 0 },
+                'جبنة بيضاء': { cal: 100, pro: 17, carb: 1.3, fat: 3, sugar: 0, fiber: 0 },
+            },
+            '🥚 البيض': {
+                'بيضة': { cal: 155, pro: 13, carb: 1.1, fat: 11, sugar: 0.6, fiber: 0 },
+            },
+            '🍚 الحبوب': {
+                'أرز أبيض مسلوق': { cal: 130, pro: 2.7, carb: 28, fat: 0.3, sugar: 0, fiber: 0.4 },
+                'أرز بني مسلوق': { cal: 111, pro: 2.6, carb: 23, fat: 0.9, sugar: 0, fiber: 1.8 },
+                'خبز أبيض': { cal: 265, pro: 9, carb: 49, fat: 3.3, sugar: 6, fiber: 2.7 },
+                'خبز أسمر': { cal: 247, pro: 8.7, carb: 41, fat: 3.3, sugar: 3.3, fiber: 6.4 },
+                'شوفان': { cal: 389, pro: 17, carb: 66, fat: 7, sugar: 0, fiber: 10 },
+            },
+            '🥔 الخضار': {
+                'بطاطا مسلوقة': { cal: 77, pro: 1.7, carb: 17, fat: 0.1, sugar: 0.9, fiber: 2.1 },
+                'جزر': { cal: 41, pro: 0.9, carb: 10, fat: 0.2, sugar: 4.7, fiber: 2.8 },
+                'خيار': { cal: 16, pro: 0.7, carb: 4, fat: 0.1, sugar: 1.7, fiber: 0.5 },
+                'بروكلي': { cal: 34, pro: 2.8, carb: 7, fat: 0.4, sugar: 1.4, fiber: 2.4 },
+                'سبانخ': { cal: 23, pro: 2.9, carb: 3.6, fat: 0.4, sugar: 0.4, fiber: 2.2 },
+            },
+            '🍎 الفواكه': {
+                'موز صغير (100ج)': { cal: 89, pro: 1.1, carb: 23, fat: 0.3, sugar: 12, fiber: 2.6 },
+                'موز متوسط (120ج)': { cal: 107, pro: 1.3, carb: 27, fat: 0.3, sugar: 14.4, fiber: 3.1 },
+                'تفاح': { cal: 52, pro: 0.3, carb: 14, fat: 0.2, sugar: 10, fiber: 2.4 },
+                'برتقال': { cal: 47, pro: 0.9, carb: 12, fat: 0.1, sugar: 9.3, fiber: 2.4 },
+            },
+            '🥜 المكسرات': {
+                'لوز': { cal: 579, pro: 21, carb: 22, fat: 50, sugar: 4.4, fiber: 12.5 },
+                'جوز': { cal: 654, pro: 15, carb: 14, fat: 65, sugar: 2.6, fiber: 6.7 },
+                'فستق': { cal: 560, pro: 20, carb: 28, fat: 45, sugar: 7.7, fiber: 10.3 },
+            },
+            '💪 البروتين': {
+                'واي بروتين': { cal: 110, pro: 25, carb: 1, fat: 0.5, sugar: 0.3, fiber: 0 },
+                'بروتين بار': { cal: 200, pro: 20, carb: 15, fat: 8, sugar: 3, fiber: 3 },
+            },
+        };
+
+        let data = {};
+        let meals = [];
+        let selectedFood = null;
+        let TARGET = 1800;
+
+        function buildFoodList() {
+            let html = '';
+            Object.entries(FOODS).forEach(([cat, items]) => {
+                html += `<div class="dropdown-group"><div class="dropdown-label">${cat}</div>`;
+                Object.keys(items).forEach(food => {
+                    html += `<div class="dropdown-item" data-food="${food}" onclick="selectFood('${cat}', '${food}')">${food}</div>`;
+                });
+                html += `</div>`;
+            });
+            document.getElementById('foodList').innerHTML = html;
+        }
+
+        function filterFoods() {
+            const search = document.getElementById('searchBox').value.toLowerCase();
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.classList.toggle('hidden', !text.includes(search));
+            });
+        }
+
+        function toggleDropdown() {
+            document.getElementById('foodDropdown').classList.toggle('show');
+        }
+
+        function selectFood(cat, food) {
+            selectedFood = {cat, food};
+            document.getElementById('foodText').textContent = food;
+            document.getElementById('foodDropdown').classList.remove('show');
+            document.getElementById('searchBox').value = '';
+            filterFoods();
+            const info = FOODS[cat][food];
+            document.getElementById('foodInfo').textContent = `🔥 ${info.cal} سعرة | 💪 ${info.pro}ج | ⚡ ${info.carb}ج | 🧈 ${info.fat}ج | 🍬 ${info.sugar}ج`;
+            document.getElementById('foodInfo').style.display = 'block';
+        }
+
+        function updateGoal() {
+            TARGET = parseFloat(document.getElementById('goalInput').value) || 1800;
+            render();
+        }
+
+        function addMeal() {
+            const grams = parseFloat(document.getElementById('grams').value);
+            if (!selectedFood || !grams) {
+                alert('اختر الطعام والكمية!');
+                return;
+            }
+            const {cal, pro, carb, fat, sugar, fiber} = FOODS[selectedFood.cat][selectedFood.food];
+            const m = grams / 100;
+            meals.push({
+                id: Date.now(),
+                name: `${selectedFood.food} (${grams}ج)`,
+                cal: Math.round(cal * m),
+                pro: Math.round(pro * m * 10) / 10,
+                carb: Math.round(carb * m * 10) / 10,
+                fat: Math.round(fat * m * 10) / 10,
+                sugar: Math.round(sugar * m * 10) / 10,
+                fiber: Math.round(fiber * m * 10) / 10,
+            });
+            selectedFood = null;
+            document.getElementById('foodText').textContent = 'اختر من القائمة';
+            document.getElementById('grams').value = '';
+            document.getElementById('foodInfo').style.display = 'none';
+            render();
+        }
+
+        function toggleManual() {
+            const s = document.getElementById('manualSection');
+            s.style.display = s.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function addManual() {
+            const name = document.getElementById('manualName').value.trim();
+            const cal = parseFloat(document.getElementById('manualCal').value);
+            if (!name || !cal) {
+                alert('أدخل الاسم والسعرات!');
+                return;
+            }
+            meals.push({
+                id: Date.now(),
+                name,
+                cal: Math.round(cal),
+                pro: parseFloat(document.getElementById('manualPro').value) || 0,
+                carb: parseFloat(document.getElementById('manualCarb').value) || 0,
+                fat: parseFloat(document.getElementById('manualFat').value) || 0,
+                sugar: parseFloat(document.getElementById('manualSugar').value) || 0,
+                fiber: parseFloat(document.getElementById('manualFiber').value) || 0,
+            });
+            ['manualName', 'manualCal', 'manualPro', 'manualCarb', 'manualFat', 'manualSugar', 'manualFiber'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            render();
+        }
+
+        function deleteMeal(id) {
+            meals = meals.filter(m => m.id !== id);
+            render();
+        }
+
+        function render() {
+            const totals = {
+                cal: meals.reduce((s, m) => s + m.cal, 0),
+                pro: meals.reduce((s, m) => s + m.pro, 0),
+                carb: meals.reduce((s, m) => s + m.carb, 0),
+                fat: meals.reduce((s, m) => s + m.fat, 0),
+                sugar: meals.reduce((s, m) => s + m.sugar, 0),
+                fiber: meals.reduce((s, m) => s + m.fiber, 0),
+            };
+
+            document.getElementById('totalCal').textContent = totals.cal;
+            const rem = Math.max(0, TARGET - totals.cal);
+            document.getElementById('remaining').textContent = rem;
+            const p = Math.min((totals.cal / TARGET) * 100, 100);
+            document.getElementById('percent').textContent = Math.round(p) + '%';
+            const bar = document.getElementById('progBar');
+            bar.style.width = p + '%';
+            bar.className = p > 105 ? 'progress-bar warning' : 'progress-bar';
+
+            const list = document.getElementById('mealsList');
+            if (meals.length === 0) {
+                list.innerHTML = '<div class="empty">لم تضيف وجبات 👋</div>';
+            } else {
+                list.innerHTML = meals.map(m => `
+                    <div class="meal">
+                        <div class="meal-info">
+                            <div class="meal-name">${m.name}</div>
+                            <div class="meal-cal">🔥 ${m.cal} | 💪 ${m.pro}ج | ⚡ ${m.carb}ج | 🧈 ${m.fat}ج | 🍬 ${m.sugar}ج</div>
+                        </div>
+                        <button class="meal-delete" onclick="deleteMeal(${m.id})">×</button>
+                    </div>
+                `).join('');
+            }
+
+            const carbPercent = totals.cal > 0 ? Math.round((totals.carb * 4) / totals.cal * 100) : 0;
+            const fatPercent = totals.cal > 0 ? Math.round((totals.fat * 9) / totals.cal * 100) : 0;
+            const proPercent = totals.cal > 0 ? Math.round((totals.pro * 4) / totals.cal * 100) : 0;
+            const sugarPercent = totals.sugar > 0 ? Math.round((totals.sugar / totals.carb) * 100) : 0;
+
+            let sum = document.getElementById('summary');
+            sum.innerHTML = `
+                <div class="summary-item">
+                    <div class="summary-label">بروتين</div>
+                    <div class="summary-value">${Math.round(totals.pro)}ج</div>
+                    <div class="percent">${proPercent}%</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">كاربو</div>
+                    <div class="summary-value">${Math.round(totals.carb)}ج</div>
+                    <div class="percent">${carbPercent}%</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">دهون</div>
+                    <div class="summary-value">${Math.round(totals.fat)}ج</div>
+                    <div class="percent">${fatPercent}%</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">سكريات</div>
+                    <div class="summary-value">${Math.round(totals.sugar)}ج</div>
+                    <div class="percent">${sugarPercent}%</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">ألياف</div>
+                    <div class="summary-value">${Math.round(totals.fiber)}ج</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">متبقي</div>
+                    <div class="summary-value">${rem}</div>
+                </div>
+            `;
+            sum.style.display = 'grid';
+
+            saveData();
+        }
+
+        function saveData() {
+            const date = document.getElementById('dateInput').value;
+            data[date] = meals;
+            try {
+                localStorage.setItem('eattrack', JSON.stringify({data, goal: TARGET}));
+            } catch(e) {}
+        }
+
+        function loadData() {
+            const date = document.getElementById('dateInput').value;
+            try {
+                const stored = JSON.parse(localStorage.getItem('eattrack') || '{}');
+                data = stored.data || {};
+                TARGET = stored.goal || 1800;
+                document.getElementById('goalInput').value = TARGET;
+            } catch(e) {}
+            meals = data[date] || [];
+            render();
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+            if (tab === 'history') renderHistory();
+        }
+
+        function renderHistory() {
+            const dates = Object.keys(data).sort().reverse().slice(0, 30);
+            if (dates.length === 0) {
+                document.getElementById('historyList').innerHTML = '<div class="empty">لا توجد بيانات</div>';
+                return;
+            }
+            document.getElementById('historyList').innerHTML = dates.map(date => {
+                const ms = data[date];
+                const cal = ms.reduce((s, m) => s + m.cal, 0);
+                const pro = ms.reduce((s, m) => s + m.pro, 0);
+                return `
+                    <div class="history-item">
+                        <div class="history-date">${new Date(date).toLocaleDateString('ar-EG')}</div>
+                        <div>
+                            <div class="history-cal">🔥 ${cal}</div>
+                            <div style="font-size:0.75rem;color:#94a3b8;">💪 ${Math.round(pro)}ج</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function exportData() {
+            const csv = Object.entries(data).map(([d, ms]) => {
+                const cal = ms.reduce((s, m) => s + m.cal, 0);
+                const pro = ms.reduce((s, m) => s + m.pro, 0);
+                const carb = ms.reduce((s, m) => s + m.carb, 0);
+                return `${d},${cal},${Math.round(pro)},${Math.round(carb)}`;
+            }).join('\n');
+            const blob = new Blob([csv], {type: 'text/csv'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'eat.csv';
+            a.click();
+        }
+
+        document.getElementById('dateInput').value = new Date().toISOString().split('T')[0];
+        document.getElementById('dateInput').addEventListener('change', loadData);
+        buildFoodList();
+        loadData();
+        
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.dropdown') && !e.target.closest('.dropdown-btn')) {
+                document.getElementById('foodDropdown').classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

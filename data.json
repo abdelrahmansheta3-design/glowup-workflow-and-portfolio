@@ -1,70 +1,65 @@
 {
- "generated_at": "2026-10-03T04:00:19.540Z",
+ "generated_at": "2026-10-04T04:00:17.462Z",
  "brand": "Demo Kitchen (demo data)",
  "sales": {
   "brand": "Demo Kitchen (demo data)",
   "yesterday": {
-   "date": "2026-10-02",
-   "orders": 131,
+   "date": "2026-10-03",
+   "orders": 112,
    "cancelled": 2,
-   "net_sales_aed": 7902,
-   "avg_order_aed": 60,
+   "net_sales_aed": 6852,
+   "avg_order_aed": 61,
    "top3": [
     [
-     "Egg White Omelette",
-     21
-    ],
-    [
-     "Chicken Caesar Wrap",
+     "Greek Chicken Salad",
      20
     ],
     [
-     "Chicken Burger",
-     19
+     "Chicken Caesar Wrap",
+     17
+    ],
+    [
+     "Grilled Chicken Rice Bowl",
+     17
     ]
    ],
    "bottom3": [
     [
-     "Protein Brownie",
+     "Energy Balls",
      5
     ],
     [
-     "Overnight Oats",
-     6
+     "Berry Protein Smoothie",
+     5
     ],
     [
-     "Berry Protein Smoothie",
-     7
+     "Protein Brownie",
+     6
     ]
    ],
    "channels": {
-    "Talabat": 3010,
-    "Deliveroo": 2537,
-    "Direct": 1023,
-    "Noon Food": 859,
-    "Careem": 473
+    "Talabat": 3080,
+    "Deliveroo": 1426,
+    "Noon Food": 922,
+    "Careem": 857,
+    "Direct": 567
    },
    "peak_hours": [
-    "12:00 (18 orders)",
-    "13:00 (16 orders)",
-    "18:00 (12 orders)"
+    "13:00 (18 orders)",
+    "19:00 (16 orders)",
+    "20:00 (11 orders)"
    ]
   },
   "same_day_last_week": {
-   "date": "2026-09-25",
-   "orders": 128,
-   "net_sales_aed": 7135
+   "date": "2026-09-26",
+   "orders": 100,
+   "net_sales_aed": 5727
   },
   "change_vs_last_week": {
-   "net_sales_pct": 10.7,
-   "orders_pct": 2.3
+   "net_sales_pct": 19.6,
+   "orders_pct": 12
   },
   "last_7_days": [
-   {
-    "date": "2026-09-26",
-    "net": 5727,
-    "orders": 100
-   },
    {
     "date": "2026-09-27",
     "net": 7997,
@@ -94,128 +89,133 @@
     "date": "2026-10-02",
     "net": 7902,
     "orders": 131
+   },
+   {
+    "date": "2026-10-03",
+    "net": 6852,
+    "orders": 112
    }
   ],
   "analysis_28d": {
    "hourly_yesterday_vs_baseline": [
     {
      "hour": 7,
-     "orders": 0,
-     "net_aed": 0,
+     "orders": 1,
+     "net_aed": 77,
      "baseline_orders": 1.7,
-     "vs_baseline_pct": -100
+     "vs_baseline_pct": -40
     },
     {
      "hour": 8,
-     "orders": 9,
-     "net_aed": 400,
-     "baseline_orders": 2.3,
-     "vs_baseline_pct": 285.7
+     "orders": 3,
+     "net_aed": 302,
+     "baseline_orders": 4.3,
+     "vs_baseline_pct": -30.8
     },
     {
      "hour": 9,
-     "orders": 3,
-     "net_aed": 341,
-     "baseline_orders": 5.3,
-     "vs_baseline_pct": -43.7
+     "orders": 7,
+     "net_aed": 329,
+     "baseline_orders": 6.3,
+     "vs_baseline_pct": 10.5
     },
     {
      "hour": 10,
-     "orders": 5,
-     "net_aed": 226,
-     "baseline_orders": 5.3,
-     "vs_baseline_pct": -6.2
+     "orders": 6,
+     "net_aed": 434,
+     "baseline_orders": 6.7,
+     "vs_baseline_pct": -10
     },
     {
      "hour": 11,
-     "orders": 9,
-     "net_aed": 625,
-     "baseline_orders": 8,
-     "vs_baseline_pct": 12.5
+     "orders": 8,
+     "net_aed": 362,
+     "baseline_orders": 6.7,
+     "vs_baseline_pct": 20
     },
     {
      "hour": 12,
-     "orders": 18,
-     "net_aed": 1051,
-     "baseline_orders": 13,
-     "vs_baseline_pct": 38.5
+     "orders": 7,
+     "net_aed": 333,
+     "baseline_orders": 8.7,
+     "vs_baseline_pct": -19.2
     },
     {
      "hour": 13,
-     "orders": 16,
-     "net_aed": 876,
-     "baseline_orders": 15.3,
-     "vs_baseline_pct": 4.3
+     "orders": 18,
+     "net_aed": 1121,
+     "baseline_orders": 10.3,
+     "vs_baseline_pct": 74.2
     },
     {
      "hour": 14,
-     "orders": 7,
-     "net_aed": 438,
-     "baseline_orders": 7,
-     "vs_baseline_pct": 0
+     "orders": 5,
+     "net_aed": 336,
+     "baseline_orders": 7.7,
+     "vs_baseline_pct": -34.8
     },
     {
      "hour": 15,
-     "orders": 8,
-     "net_aed": 408,
-     "baseline_orders": 4,
-     "vs_baseline_pct": 100
+     "orders": 2,
+     "net_aed": 172,
+     "baseline_orders": 2.7,
+     "vs_baseline_pct": -25
     },
     {
      "hour": 16,
-     "orders": 4,
-     "net_aed": 219,
-     "baseline_orders": 2,
-     "vs_baseline_pct": 100
+     "orders": 1,
+     "net_aed": 76,
+     "baseline_orders": 3,
+     "vs_baseline_pct": -66.7
     },
     {
      "hour": 17,
-     "orders": 5,
-     "net_aed": 233,
-     "baseline_orders": 3.3,
-     "vs_baseline_pct": 50
-    },
-    {
-     "hour": 18,
-     "orders": 12,
-     "net_aed": 584,
-     "baseline_orders": 7.7,
-     "vs_baseline_pct": 56.5
-    },
-    {
-     "hour": 19,
-     "orders": 8,
-     "net_aed": 588,
-     "baseline_orders": 16,
+     "orders": 2,
+     "net_aed": 132,
+     "baseline_orders": 4,
      "vs_baseline_pct": -50
     },
     {
-     "hour": 20,
+     "hour": 18,
      "orders": 8,
-     "net_aed": 659,
-     "baseline_orders": 14,
-     "vs_baseline_pct": -42.9
+     "net_aed": 427,
+     "baseline_orders": 6.7,
+     "vs_baseline_pct": 20
+    },
+    {
+     "hour": 19,
+     "orders": 16,
+     "net_aed": 882,
+     "baseline_orders": 10.3,
+     "vs_baseline_pct": 54.8
+    },
+    {
+     "hour": 20,
+     "orders": 11,
+     "net_aed": 620,
+     "baseline_orders": 11.7,
+     "vs_baseline_pct": -5.7
     },
     {
      "hour": 21,
      "orders": 7,
-     "net_aed": 370,
-     "baseline_orders": 10,
-     "vs_baseline_pct": -30
+     "net_aed": 519,
+     "baseline_orders": 7.3,
+     "vs_baseline_pct": -4.5
     },
     {
      "hour": 22,
-     "orders": 5,
-     "net_aed": 320,
-     "baseline_orders": 8,
-     "vs_baseline_pct": -37.5
+     "orders": 6,
+     "net_aed": 515,
+     "baseline_orders": 6.3,
+     "vs_baseline_pct": -5.3
     },
     {
      "hour": 23,
-     "orders": 7,
-     "net_aed": 563,
-     "baseline_orders": 1.7,
-     "vs_baseline_pct": 320
+     "orders": 4,
+     "net_aed": 214,
+     "baseline_orders": 2.3,
+     "vs_baseline_pct": 71.4
     }
    ],
    "hour_profile": [
@@ -225,7 +225,7 @@
     },
     {
      "hour": 8,
-     "avg_orders": 4
+     "avg_orders": 3.9
     },
     {
      "hour": 9,
@@ -233,11 +233,11 @@
     },
     {
      "hour": 10,
-     "avg_orders": 4.4
+     "avg_orders": 4.5
     },
     {
      "hour": 11,
-     "avg_orders": 6.8
+     "avg_orders": 7
     },
     {
      "hour": 12,
@@ -245,19 +245,19 @@
     },
     {
      "hour": 13,
-     "avg_orders": 13
+     "avg_orders": 13.4
     },
     {
      "hour": 14,
-     "avg_orders": 7.1
+     "avg_orders": 7.2
     },
     {
      "hour": 15,
-     "avg_orders": 3.6
+     "avg_orders": 3.5
     },
     {
      "hour": 16,
-     "avg_orders": 3
+     "avg_orders": 2.8
     },
     {
      "hour": 17,
@@ -265,19 +265,19 @@
     },
     {
      "hour": 18,
-     "avg_orders": 6.9
+     "avg_orders": 7
     },
     {
      "hour": 19,
-     "avg_orders": 11
+     "avg_orders": 11.2
     },
     {
      "hour": 20,
-     "avg_orders": 10.4
+     "avg_orders": 10.5
     },
     {
      "hour": 21,
-     "avg_orders": 8
+     "avg_orders": 7.9
     },
     {
      "hour": 22,
@@ -285,7 +285,7 @@
     },
     {
      "hour": 23,
-     "avg_orders": 1.8
+     "avg_orders": 1.9
     }
    ],
    "dead_hours": [
@@ -296,43 +296,43 @@
     },
     {
      "hour": 8,
-     "avg_orders": 4,
-     "share_of_peak_pct": 31
+     "avg_orders": 3.9,
+     "share_of_peak_pct": 29
     },
     {
      "hour": 10,
-     "avg_orders": 4.4,
+     "avg_orders": 4.5,
      "share_of_peak_pct": 34
     },
     {
      "hour": 15,
-     "avg_orders": 3.6,
-     "share_of_peak_pct": 28
+     "avg_orders": 3.5,
+     "share_of_peak_pct": 26
     },
     {
      "hour": 16,
-     "avg_orders": 3,
-     "share_of_peak_pct": 23
+     "avg_orders": 2.8,
+     "share_of_peak_pct": 21
     },
     {
      "hour": 17,
      "avg_orders": 3.8,
-     "share_of_peak_pct": 29
+     "share_of_peak_pct": 28
     },
     {
      "hour": 23,
-     "avg_orders": 1.8,
+     "avg_orders": 1.9,
      "share_of_peak_pct": 14
     }
    ],
    "peak_hours": [
     {
      "hour": 13,
-     "avg_orders": 13
+     "avg_orders": 13.4
     },
     {
      "hour": 19,
-     "avg_orders": 11
+     "avg_orders": 11.2
     },
     {
      "hour": 12,
@@ -344,215 +344,215 @@
      "day": "Sun",
      "avg_orders": 99.8,
      "avg_net_aed": 6132,
-     "vs_week_avg_pct": -5.3
+     "vs_week_avg_pct": -6.2
     },
     {
      "day": "Mon",
      "avg_orders": 100,
      "avg_net_aed": 6255,
-     "vs_week_avg_pct": -3.4
+     "vs_week_avg_pct": -4.3
     },
     {
      "day": "Tue",
      "avg_orders": 104.3,
      "avg_net_aed": 6297,
-     "vs_week_avg_pct": -2.8
+     "vs_week_avg_pct": -3.7
     },
     {
      "day": "Wed",
      "avg_orders": 99.5,
      "avg_net_aed": 6092,
-     "vs_week_avg_pct": -5.9
+     "vs_week_avg_pct": -6.8
     },
     {
      "day": "Thu",
      "avg_orders": 119.8,
      "avg_net_aed": 7079,
-     "vs_week_avg_pct": 9.3
+     "vs_week_avg_pct": 8.3
     },
     {
      "day": "Fri",
      "avg_orders": 126.3,
      "avg_net_aed": 7423,
-     "vs_week_avg_pct": 14.6
+     "vs_week_avg_pct": 13.5
     },
     {
      "day": "Sat",
-     "avg_orders": 102.8,
-     "avg_net_aed": 6063,
-     "vs_week_avg_pct": -6.4
+     "avg_orders": 108,
+     "avg_net_aed": 6491,
+     "vs_week_avg_pct": -0.7
     }
    ],
    "weakest_days": [
     {
-     "day": "Sat",
-     "avg_orders": 102.8,
-     "avg_net_aed": 6063,
-     "vs_week_avg_pct": -6.4
-    },
-    {
      "day": "Wed",
      "avg_orders": 99.5,
      "avg_net_aed": 6092,
-     "vs_week_avg_pct": -5.9
+     "vs_week_avg_pct": -6.8
     },
     {
      "day": "Sun",
      "avg_orders": 99.8,
      "avg_net_aed": 6132,
-     "vs_week_avg_pct": -5.3
+     "vs_week_avg_pct": -6.2
+    },
+    {
+     "day": "Mon",
+     "avg_orders": 100,
+     "avg_net_aed": 6255,
+     "vs_week_avg_pct": -4.3
     }
    ],
    "top_items": [
     {
      "item": "Grilled Chicken Rice Bowl",
      "category": "Bowls",
-     "units_28d": 635,
-     "revenue_aed_28d": 24942,
-     "trend_14d_pct": 13.1,
-     "unit_share_pct": 11.7
+     "units_28d": 638,
+     "revenue_aed_28d": 25099,
+     "trend_14d_pct": 6.5,
+     "unit_share_pct": 11.6
     },
     {
      "item": "Chicken Caesar Wrap",
      "category": "Wraps",
-     "units_28d": 437,
-     "revenue_aed_28d": 14334,
-     "trend_14d_pct": -4.9,
+     "units_28d": 439,
+     "revenue_aed_28d": 14382,
+     "trend_14d_pct": -10,
      "unit_share_pct": 8
     },
     {
      "item": "Beef Burrito Bowl",
      "category": "Bowls",
      "units_28d": 408,
-     "revenue_aed_28d": 18298,
-     "trend_14d_pct": -13.7,
-     "unit_share_pct": 7.5
+     "revenue_aed_28d": 18290,
+     "trend_14d_pct": -11.1,
+     "unit_share_pct": 7.4
     },
     {
      "item": "Teriyaki Salmon Bowl",
      "category": "Bowls",
-     "units_28d": 354,
-     "revenue_aed_28d": 18112,
-     "trend_14d_pct": -8.6,
-     "unit_share_pct": 6.5
+     "units_28d": 367,
+     "revenue_aed_28d": 18783,
+     "trend_14d_pct": -12.8,
+     "unit_share_pct": 6.7
     },
     {
      "item": "Protein Shawarma Wrap",
      "category": "Wraps",
-     "units_28d": 350,
-     "revenue_aed_28d": 10855,
-     "trend_14d_pct": 14.7,
-     "unit_share_pct": 6.4
+     "units_28d": 348,
+     "revenue_aed_28d": 10809,
+     "trend_14d_pct": 4.7,
+     "unit_share_pct": 6.3
     }
    ],
    "weak_items": [
     {
      "item": "Overnight Oats",
      "category": "Breakfast",
-     "units_28d": 138,
-     "revenue_aed_28d": 2845,
-     "trend_14d_pct": 55.6,
-     "unit_share_pct": 2.5
+     "units_28d": 143,
+     "revenue_aed_28d": 2947,
+     "trend_14d_pct": 46.6,
+     "unit_share_pct": 2.6
     },
     {
      "item": "Energy Balls",
      "category": "Snacks",
-     "units_28d": 176,
-     "revenue_aed_28d": 2338,
-     "trend_14d_pct": -14.7,
+     "units_28d": 175,
+     "revenue_aed_28d": 2335,
+     "trend_14d_pct": -25,
      "unit_share_pct": 3.2
     },
     {
      "item": "Egg White Omelette",
      "category": "Breakfast",
-     "units_28d": 189,
-     "revenue_aed_28d": 4973,
-     "trend_14d_pct": 12.4,
+     "units_28d": 194,
+     "revenue_aed_28d": 5107,
+     "trend_14d_pct": 15.6,
      "unit_share_pct": 3.5
     },
     {
      "item": "Tuna Power Salad",
      "category": "Salads",
-     "units_28d": 202,
-     "revenue_aed_28d": 7416,
-     "trend_14d_pct": 12.6,
-     "unit_share_pct": 3.7
+     "units_28d": 208,
+     "revenue_aed_28d": 7623,
+     "trend_14d_pct": 10.1,
+     "unit_share_pct": 3.8
     },
     {
      "item": "Protein Brownie",
      "category": "Snacks",
-     "units_28d": 228,
-     "revenue_aed_28d": 3233,
-     "trend_14d_pct": -19,
-     "unit_share_pct": 4.2
+     "units_28d": 224,
+     "revenue_aed_28d": 3189,
+     "trend_14d_pct": -23.6,
+     "unit_share_pct": 4.1
     }
    ],
    "basket": {
-    "multi_item_orders_pct": 44.4,
+    "multi_item_orders_pct": 44.5,
     "top_pairs": [
      {
       "pair": "Chicken Caesar Wrap + Grilled Chicken Rice Bowl",
-      "orders": 34
+      "orders": 32
      },
      {
       "pair": "Beef Burrito Bowl + Grilled Chicken Rice Bowl",
-      "orders": 33
+      "orders": 31
+     },
+     {
+      "pair": "Grilled Chicken Rice Bowl + Quinoa Avocado Salad",
+      "orders": 30
+     },
+     {
+      "pair": "Falafel Hummus Wrap + Grilled Chicken Rice Bowl",
+      "orders": 30
      },
      {
       "pair": "Grilled Chicken Rice Bowl + Teriyaki Salmon Bowl",
       "orders": 30
-     },
-     {
-      "pair": "Beef Burrito Bowl + Quinoa Avocado Salad",
-      "orders": 29
-     },
-     {
-      "pair": "Grilled Chicken Rice Bowl + Quinoa Avocado Salad",
-      "orders": 29
      }
     ]
    },
    "promo": {
-    "orders_with_promo_pct": 28.9,
+    "orders_with_promo_pct": 28.7,
     "aov_promo_aed": 52,
     "aov_no_promo_aed": 64,
-    "discount_cost_aed_28d": 12468
+    "discount_cost_aed_28d": 12571
    },
    "channels": [
     {
      "channel": "Talabat",
-     "orders_28d": 1293,
-     "net_aed_28d": 76746,
-     "commission_aed_28d": 19187,
+     "orders_28d": 1295,
+     "net_aed_28d": 76928,
+     "commission_aed_28d": 19232,
      "aov_aed": 59
     },
     {
      "channel": "Deliveroo",
-     "orders_28d": 681,
-     "net_aed_28d": 40305,
-     "commission_aed_28d": 11285,
+     "orders_28d": 682,
+     "net_aed_28d": 40370,
+     "commission_aed_28d": 11304,
      "aov_aed": 59
     },
     {
      "channel": "Careem",
-     "orders_28d": 400,
-     "net_aed_28d": 25699,
-     "commission_aed_28d": 5654,
+     "orders_28d": 412,
+     "net_aed_28d": 26447,
+     "commission_aed_28d": 5818,
      "aov_aed": 64
     },
     {
      "channel": "Direct",
      "orders_28d": 338,
-     "net_aed_28d": 20256,
+     "net_aed_28d": 20388,
      "commission_aed_28d": 0,
      "aov_aed": 60
     },
     {
      "channel": "Noon Food",
-     "orders_28d": 297,
-     "net_aed_28d": 18355,
-     "commission_aed_28d": 3671,
-     "aov_aed": 62
+     "orders_28d": 303,
+     "net_aed_28d": 18940,
+     "commission_aed_28d": 3788,
+     "aov_aed": 63
     }
    ]
   }
@@ -562,12 +562,6 @@
   "Kcal": [],
   "Low Calories": [],
   "Market trends": [
-   {
-    "title": "“A concept can be beautiful, but it also has to work as a business”: Nathalie Haddad - Caterer Middle East",
-    "date": "Fri, 18 Sep 2026 07:00:00 GMT",
-    "source": "Caterer Middle East",
-    "link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQZlNQb3loeGpDM1lodnh6WWR6UUtMZ0NTakVNb0Q3V0tjbHpCTkZiUTBCY0w3N2ZNZnVvMzN5dGdieWhyT2Uwa3l1QUY0Ulg1SXRRZ2xqc3BsM1VpUm1TUFl4ZHdYTkZxMnlTMVBlQWV0S2RsVHpzZGt2dGtaVG5yRDlfM1YzT1RVNXpTQTIyZVBDSVp4UVlmSWJpdGlmeFNsX2xqLVVMOExqcTlkbzZMSXk4RkZlQ0FQS3RjYzFB?oc=5"
-   },
    {
     "title": "Telehealth-Linked Nutrition Product Market - Future Market Insights",
     "date": "Thu, 17 Sep 2026 18:30:00 GMT",
@@ -591,8 +585,14 @@
     "date": "Mon, 14 Sep 2026 07:00:00 GMT",
     "source": "Fortune Business Insights",
     "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9zc3pLbmlxNXdhRkZPTjZPOGpPVlp4czJOWmZaRDBob29Yc2dGdklqcTAyX3hSZko2T04zR05zMG00WHFoN0VVQV94dFFRRXU0eGs2SEM0S0tCVFlRdUtsMTFZbXY1MVJtMVZDTkNITFF1NGt3bXpIZzBR?oc=5"
+   },
+   {
+    "title": "Convenience Food Market Size, Share | Industry Report [2034] - Fortune Business Insights",
+    "date": "Mon, 14 Sep 2026 07:00:00 GMT",
+    "source": "Fortune Business Insights",
+    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9ucml0cWFzbmRuVVRMNk5LV0oyS2xOZWU2b3VGWmRoUUhfMG9yZXRsRlFmNkc4am1DQmZ5Tl85UElibjljdUpaaHF6YVhjcDdyNXF6SW82MmVuNno3V01NUVJTX3dlaTFFUUo3ZWNfOWc4OExYM3FhbUZR?oc=5"
    }
   ]
  },
- "brief": "1) YESTERDAY AT A GLANCE\nNet sales: 7902 AED, 131 orders, average order: 60 AED. Change vs same weekday last week: net sales +10.7% ↑, orders +2.3% ↑. Over-performing hours: 8:00 (285.7% ↑), 15:00 (100% ↑), 16:00 (100% ↑). Under-performing hours: 9:00 (43.7% ↓), 19:00 (50% ↓), 20:00 (42.9% ↓).\n\n2) WHAT THE NUMBERS SAY\n- Dead hours: 7:00 (avg 2 orders, 15% of peak), 8:00 (avg 4 orders, 31% of peak), 10:00 (avg 4.4 orders, 34% of peak). \n- Weakest days: Saturday (avg 102.8 orders, -6.4% vs week avg), Wednesday (avg 99.5 orders, -5.9% vs week avg), Sunday (avg 99.8 orders, -5.3% vs week avg). \n- Weak item: Protein Brownie (units down 19% in 14 days). \n- Promo orders have 52 AED average order vs 64 AED for non-promo orders. \n\n3) MARKET WATCH\nNo relevant competitor news this month. Market trends: Telehealth-linked nutrition products, cloud kitchen market growth, meal kit delivery services, meal replacement market.\n\n4) OFFERS TO RUN\n- Early Bird Bundle | Why: 7:00 dead hour (avg 2 orders) | Mechanic: Free Energy Balls with any breakfast item (min spend 45 AED) | When: Mon-Fri 7:00-8:00 | Channel: Direct | Goal: Increase 7:00 orders by 50% (to 3 orders)\n- Protein Brownie Boost | Why: Protein Brownie units down 19% | Mechanic: Add Protein Brownie for 10 AED (20% off) with any top 3 item | When: All days, all hours | Channel: Talabat | Goal: Increase Protein Brownie units by 25%\n- Saturday Surge | Why: Saturday is weakest day (avg 102.8 orders, -6.4% vs week avg) | Mechanic: 15% off entire order (min spend 60 AED) | When: Saturday 11:00-14:00 | Channel: Direct | Goal: Increase Saturday orders by 10%\n\n5) WATCH TOMORROW\n- Check 7:00 orders for Early Bird Bundle impact.\n- Monitor Protein Brownie units sold.\n\nDemo data"
+ "brief": "1) YESTERDAY AT A GLANCE\nNet sales AED 6852, 112 orders, average order AED 61. Up 19.6% vs same weekday last week. \nOver-performing hours: 13:00 (18 orders, +74.2% vs baseline), 19:00 (16 orders, +54.8% vs baseline). \nUnder-performing hour: 16:00 (1 order, -66.7% vs baseline).\n\n2) WHAT THE NUMBERS SAY\n- Dead hours: 16:00 (avg 2.8 orders) and 15:00 (avg 3.5 orders) are our weakest slots. \n- Weakest days: Wednesday (avg AED 6092, -6.8% vs week avg) and Sunday (avg AED 6132, -6.2% vs week avg). \n- Weak items: Energy Balls (units down 25% in 14d) and Protein Brownie (units down 23.6% in 14d). \n- Promo impact: Promo orders have a 19% lower average order (AED 52 vs AED 64 no-promo).\n\n3) MARKET WATCH\nRecent market reports highlight growth in telehealth-linked nutrition products, cloud kitchens, meal kit delivery services, meal replacements, and convenience foods. No direct competitor news.\n\n4) OFFERS TO RUN\n- Afternoon Boost | Why: 16:00 is a dead hour (avg 2.8 orders) | Mechanic: Free Energy Balls with any main dish | When: Mon-Fri 15:00-17:00 | Channel: Direct | Goal: Increase orders in 15:00-17:00 slot by 25%\n- Protein Power Pack | Why: Protein Brownie sales down 23.6% | Mechanic: Add a Protein Brownie for AED 5 with any Grilled Chicken Rice Bowl | When: All day Wed & Sun | Channel: Talabat | Goal: Sell 20 Protein Brownies on offer days\n- Midweek Lift | Why: Wednesday is weakest day (sales -6.8% vs avg) | Mechanic: 15% off entire order with min spend AED 60 | When: Wednesdays 11:00-14:00 | Channel: Deliveroo | Goal: Increase Wednesday lunch orders by 15%\n\n5) WATCH TOMORROW\n- Check 16:00 orders to see if Afternoon Boost offer is working.\n- Monitor Protein Brownie sales on Talabat for Protein Power Pack uptake.\n\nDemo data"
 }

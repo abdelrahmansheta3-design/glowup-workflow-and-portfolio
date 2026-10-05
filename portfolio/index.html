@@ -1,229 +1,374 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>*,*::before,*::after{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style><title>Abd Elrahman Portfolio</title>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Abd Elrahman Sheta · Marketing × AI</title>
+<meta name="description" content="Sales & marketing specialist in Dubai who builds AI agents and automation workflows.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: single column, sections in reading order — intro, results, AI systems, marketing, tools, contact */
+/* Layout: one dark column over a live agent-network canvas; hero with a streaming agent log, then results, systems, marketing, toolkit, contact */
 :root{
-  --bg:#f6f7fb; --surface:#ffffff; --fg:#141a2e; --muted:#5a6178; --line:#e2e5ef;
-  --accent:#2b3df0; --accent-soft:#e8ebff; --good:#17855a; --tile:#f2f3f7;
-  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
-  --body:"Instrument Sans","Segoe UI",system-ui,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --ink:#060a13; --ink-2:#0b1120; --glass:rgba(17,24,42,.62); --glass-2:rgba(22,31,54,.75);
+  --line:rgba(120,140,190,.16); --line-2:rgba(120,140,190,.30);
+  --fg:#e8ecf7; --muted:#97a1bd; --faint:#5f6a88;
+  --cyan:#5ee7d6; --blue:#7c9cff; --amber:#ffc06b; --good:#5ee7a0;
+  --display:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;
+  --body:"Instrument Sans",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0e1120; --surface:#161a2c; --fg:#eceef7; --muted:#a2a8c0; --line:#272c45;
-  --accent:#8c98ff; --accent-soft:#1f2550; --good:#4fd39a; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0e1120; --surface:#161a2c; --fg:#eceef7; --muted:#a2a8c0; --line:#272c45;
-  --accent:#8c98ff; --accent-soft:#1f2550; --good:#4fd39a; color-scheme:dark}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.6}
-.wrap{max-width:960px;margin:0 auto;padding-inline:20px;padding-block:56px 80px}
-a{color:var(--accent)}
-.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
-h1{font-family:var(--display);font-weight:700;font-size:clamp(36px,7vw,60px);line-height:1;margin:10px 0 6px;letter-spacing:-.02em}
-.role{font-family:var(--display);font-size:clamp(18px,2.6vw,22px);color:var(--muted);margin:0}
-.intro{display:grid;gap:18px}
-.intro p.lede{margin:0;max-width:64ch;font-size:17px}
-.contact{display:flex;flex-wrap:wrap;gap:10px}
-.chip{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:14px;color:var(--fg);font-variant-numeric:tabular-nums}
-.chip button{font:inherit;font-size:12px;font-weight:600;color:var(--accent);background:none;border:0;padding:0;cursor:pointer}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:6px}
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
-.stat b{display:block;font-family:var(--display);font-size:clamp(26px,4.5vw,36px);line-height:1.1;color:var(--accent);font-variant-numeric:tabular-nums}
-.stat span{font-size:14px;color:var(--muted)}
-section{margin-top:64px;display:grid;gap:20px}
-.sh{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;padding-bottom:10px;border-bottom:1px solid var(--line)}
-h2{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.6vw,32px);margin:0;letter-spacing:-.01em}
-.sh a{font-size:14px;font-weight:600;text-decoration:none}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.6;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit}
+#net{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.spot{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(600px circle at var(--x,50%) var(--y,30%),rgba(94,231,214,.07),transparent 60%)}
+.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding-inline:20px;padding-block:28px 96px}
+
+/* nav */
+nav{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0 40px;flex-wrap:wrap}
+.brand{font-family:var(--mono);font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px}
+.brand i{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 12px var(--good);animation:pulse 2.2s ease-in-out infinite}
+nav ul{list-style:none;margin:0;padding:0;display:flex;gap:4px;flex-wrap:wrap}
+nav a{font-family:var(--mono);font-size:12.5px;text-decoration:none;color:var(--muted);padding:6px 10px;border-radius:8px;transition:color .2s,background .2s}
+nav a:hover{color:var(--fg);background:var(--glass)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:40px;align-items:center;min-height:min(78vh,720px)}
+.kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(42px,7.2vw,84px);line-height:.95;letter-spacing:-.035em;margin:14px 0 18px}
+h1 .grad{background:linear-gradient(100deg,var(--fg) 0%,var(--cyan) 55%,var(--blue) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.role{font-family:var(--display);font-size:clamp(19px,2.4vw,24px);color:var(--fg);margin:0 0 8px;font-weight:400}
+.role .rot{color:var(--cyan);font-family:var(--mono);font-size:.82em;white-space:nowrap}
+.role .rot::after{content:"▍";color:var(--cyan);animation:blink 1s steps(2) infinite;margin-left:2px}
+.lede{color:var(--muted);max-width:52ch;margin:0 0 26px}
+.cta{display:flex;flex-wrap:wrap;gap:10px}
+.btn{position:relative;display:inline-flex;align-items:center;gap:8px;font:600 14px var(--body);text-decoration:none;color:var(--fg);border:1px solid var(--line-2);background:var(--glass);border-radius:10px;padding:10px 16px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;backdrop-filter:blur(8px)}
+.btn:hover{border-color:var(--cyan);transform:translateY(-2px);box-shadow:0 10px 30px -12px rgba(94,231,214,.45)}
+.btn.primary{background:linear-gradient(135deg,var(--cyan),#3fb8ff);color:#04121a;border-color:transparent}
+.btn.primary:hover{box-shadow:0 12px 36px -10px rgba(94,231,214,.7)}
+.btn:focus-visible,nav a:focus-visible,.logo:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+
+/* terminal */
+.term{border:1px solid var(--line-2);border-radius:16px;background:linear-gradient(180deg,rgba(14,20,36,.92),rgba(8,12,22,.92));box-shadow:0 30px 80px -30px rgba(0,0,0,.8),0 0 0 1px rgba(94,231,214,.05) inset;overflow:hidden;backdrop-filter:blur(10px)}
+.term-h{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line)}
+.term-h span{width:10px;height:10px;border-radius:50%;background:#2a3350}
+.term-h b{margin-left:8px;font:500 12px var(--mono);color:var(--muted)}
+.term-h em{margin-left:auto;font:500 11px var(--mono);font-style:normal;color:var(--good);display:flex;align-items:center;gap:6px}
+.term-h em::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--good);box-shadow:0 0 8px var(--good)}
+.log{font:12.5px/1.75 var(--mono);padding:14px 16px;height:300px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+.log div{display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:10px;animation:rise .35s ease-out both;white-space:nowrap}
+.log .t{color:var(--faint)} .log .w{color:var(--c)} .log .m{color:var(--fg);overflow:hidden;text-overflow:ellipsis}
+.log .ok{color:var(--good)}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:8px}
+.stat{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--glass);backdrop-filter:blur(8px)}
+.stat b{display:block;font:800 clamp(28px,4vw,40px)/1 var(--display);letter-spacing:-.02em;font-variant-numeric:tabular-nums;background:linear-gradient(120deg,var(--fg),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat span{display:block;margin-top:8px;font-size:13.5px;color:var(--muted)}
+
+/* sections */
+section{margin-top:110px;scroll-margin-top:20px}
+.sh{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:26px}
+.sh small{display:block;font:500 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+h2{font:800 clamp(30px,4.6vw,48px)/1.02 var(--display);letter-spacing:-.03em;margin:0;text-wrap:balance}
+.sh p{margin:10px 0 0;color:var(--muted);max-width:56ch}
+.sh a{font:500 13px var(--mono);color:var(--cyan);text-decoration:none;white-space:nowrap}
 .sh a:hover{text-decoration:underline}
-.prose{margin:0;color:var(--muted);max-width:66ch}
-.feature{display:grid;gap:12px}
-.feature img{width:100%;height:auto;border-radius:14px;border:1px solid var(--line);display:block}
-.feature h3{font-family:var(--display);font-size:22px;margin:0;font-variant-numeric:tabular-nums}
-.feature p{margin:0;color:var(--muted);max-width:68ch}
-.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-.thumb{display:grid;gap:8px;min-width:0}
-.thumb img{width:100%;height:auto;border-radius:12px;border:1px solid var(--line);display:block}
-.thumb b{font-family:var(--display);font-size:16px;font-variant-numeric:tabular-nums}
-.thumb span{font-size:14px;color:var(--muted)}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;grid-template-rows:auto auto 1fr auto;gap:10px;min-width:0}
-.card .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.card h3{font-family:var(--display);font-size:20px;margin:0;line-height:1.2}
+
+/* glow cards */
+.glow{position:relative;border-radius:18px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(10px);transition:transform .25s ease,border-color .25s;isolation:isolate}
+.glow::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:radial-gradient(380px circle at var(--mx,50%) var(--my,50%),rgba(94,231,214,.75),rgba(124,156,255,.35) 35%,transparent 65%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .3s;pointer-events:none}
+.glow::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(94,231,214,.08),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:-1}
+.glow:hover::before,.glow:hover::after{opacity:1}
+.glow:hover{transform:translateY(-4px)}
+
+.feature{padding:18px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:24px;align-items:center}
+.feature img{border-radius:12px}
+.feature h3{font:700 24px/1.2 var(--display);margin:0 0 10px;font-variant-numeric:tabular-nums}
+.feature p{margin:0;color:var(--muted)}
+.big{font:800 64px/1 var(--display);letter-spacing:-.03em;color:var(--good);margin-bottom:12px}
+.thumbs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
+.thumb{padding:12px;display:grid;gap:8px;min-width:0}
+.thumb img{border-radius:10px}
+.thumb b{font:700 16px var(--display);font-variant-numeric:tabular-nums}
+.thumb span{font-size:13.5px;color:var(--muted)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{padding:22px;display:grid;grid-template-rows:auto auto 1fr auto;gap:12px;min-width:0}
+.card .k{font:500 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+.card h3{font:700 21px/1.2 var(--display);margin:0}
 .card p{margin:0;color:var(--muted);font-size:15px}
 .card ul{margin:0;padding-left:18px;color:var(--muted);font-size:14px}
 .links{display:flex;flex-wrap:wrap;gap:8px}
-.btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:7px 12px;color:var(--accent);background:transparent}
-.btn:hover{border-color:var(--accent)}
-.btn.primary{background:var(--accent);color:var(--surface);border-color:var(--accent)}
-.btn:focus-visible,.chip button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.tag{font-family:var(--mono);font-size:11px;color:var(--good);border:1px solid currentColor;border-radius:999px;padding:1px 8px;justify-self:start}
-.tag.demo{color:var(--muted)}
-.logos{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:12px}
-.logo{display:grid;justify-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 8px;text-align:center}
-.logo i{width:52px;height:52px;border-radius:12px;background:var(--tile);display:grid;place-items:center}
-.logo img{width:30px;height:30px}
-.logo span{font-size:13px;font-weight:500}
-.mk{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
-.mk div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px}
-.mk b{display:block;font-size:12px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:4px}
-footer{margin-top:72px;padding-top:24px;border-top:1px solid var(--line);display:grid;gap:12px}
-footer h2{font-size:24px}
-@media (max-width:560px){.stats{grid-template-columns:minmax(0,1fr)}}
-</style></head><body>
+.links .btn{padding:8px 13px;font-size:13.5px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chip{font:500 12.5px var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 12px;background:var(--glass)}
+
+/* logos */
+.logos{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px}
+.logo{position:relative;display:grid;justify-items:center;gap:10px;padding:20px 10px 16px;border-radius:16px;background:var(--glass);border:1px solid var(--line);text-align:center;cursor:default;transition:transform .3s cubic-bezier(.2,.8,.2,1),border-color .3s,box-shadow .3s;outline:none}
+.logo i{width:60px;height:60px;border-radius:16px;background:#f3f5fa;display:grid;place-items:center;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.logo img{width:34px;height:34px}
+.logo span{font:600 13.5px var(--body)}
+.logo:hover,.logo:focus-visible{transform:translateY(-6px);border-color:var(--bc,var(--cyan));box-shadow:0 18px 40px -18px var(--bc,var(--cyan))}
+.logo:hover i,.logo:focus-visible i{transform:scale(1.12) rotate(-4deg);box-shadow:0 0 0 4px rgba(255,255,255,.04),0 0 30px -4px var(--bc,var(--cyan))}
+.tip{position:absolute;left:50%;bottom:calc(100% + 10px);transform:translate(-50%,6px);width:220px;padding:10px 12px;border-radius:10px;background:#0f1628;border:1px solid var(--line-2);font:400 12.5px/1.5 var(--body);color:var(--fg);text-align:left;display:none;pointer-events:none;z-index:5;animation:rise .2s ease-out both;box-shadow:0 16px 40px -12px rgba(0,0,0,.8)}
+.logo:hover .tip,.logo:focus-visible .tip{display:block;transform:translate(-50%,0)}
+
+/* contact */
+.contact{padding:40px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:28px;align-items:center}
+.contact h2{margin-bottom:10px}
+.contact p{margin:0;color:var(--muted)}
+.cline{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:rgba(6,10,19,.5);font:500 14px var(--mono);margin-bottom:10px;font-variant-numeric:tabular-nums}
+.cline button{font:600 12px var(--body);color:var(--cyan);background:none;border:1px solid var(--line-2);border-radius:8px;padding:5px 10px;cursor:pointer}
+.cline button:hover{border-color:var(--cyan)}
+footer{margin-top:40px;font:12px var(--mono);color:var(--faint);text-align:center}
+
+/* reveal: visible by default; JS adds .rv only to animate in */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+
+@keyframes pulse{50%{opacity:.35}}
+@keyframes blink{50%{opacity:0}}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (max-width:860px){.hero{grid-template-columns:minmax(0,1fr);min-height:0}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.feature{grid-template-columns:minmax(0,1fr)}.thumbs{grid-template-columns:minmax(0,1fr)}.contact{grid-template-columns:minmax(0,1fr);padding:24px}nav ul{display:none}.log{height:240px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<canvas id="net" aria-hidden="true"></canvas>
+<div class="spot" aria-hidden="true"></div>
 
 <div class="wrap">
-  <header class="intro">
+  <nav>
+    <div class="brand"><i></i>abd-elrahman.sheta · Dubai</div>
+    <ul>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#ai">AI systems</a></li>
+      <li><a href="#marketing">Marketing</a></li>
+      <li><a href="#tools">Toolkit</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero">
     <div>
-      <div class="eyebrow">Dubai · Available for marketing &amp; AI roles</div>
-      <h1>Abd Elrahman Sheta</h1>
-      <p class="role">Sales &amp; Marketing Specialist who builds AI workflows</p>
+      <div class="kicker">Marketing × AI automation</div>
+      <h1>Abd Elrahman <span class="grad">Sheta</span></h1>
+      <p class="role">Sales &amp; marketing specialist who builds AI agents that <span class="rot" id="rot">write the daily sales brief</span></p>
+      <p class="lede">I grow F&amp;B and delivery brands, and I build the AI workflows behind the work: agents that read the numbers, watch competitors and tell the team what to do next.</p>
+      <div class="cta">
+        <a class="btn primary" href="#ai">See the AI systems</a>
+        <a class="btn" href="#results">Sales results</a>
+        <a class="btn" href="#contact">Contact</a>
+      </div>
     </div>
-    <p class="lede">I work mostly with F&amp;B and delivery brands. My work sits where marketing meets automation: I plan and run the marketing, and I build the AI workflows that make it faster to execute and easier to measure.</p>
-    <div class="contact">
-      <span class="chip">sheeta.ae@gmail.com <button type="button" data-copy="sheeta.ae@gmail.com">Copy</button></span>
-      <span class="chip">+971 56 496 6030 <button type="button" data-copy="+971564966030">Copy</button></span>
-    </div>
-    <div class="stats">
-      <div class="stat"><b>+296%</b><span>monthly gross sales</span></div>
-      <div class="stat"><b>+75%</b><span>weekly orders</span></div>
-      <div class="stat"><b>3 agents</b><span>running a daily restaurant brief</span></div>
+    <div class="term" aria-label="Example activity log from my agents">
+      <div class="term-h"><span></span><span></span><span></span><b>agents.log</b><em>live demo</em></div>
+      <div class="log" id="log"></div>
     </div>
   </header>
 
+  <div class="stats">
+    <div class="stat"><b data-count="296" data-pre="+" data-suf="%">+296%</b><span>monthly gross sales</span></div>
+    <div class="stat"><b data-count="75" data-pre="+" data-suf="%">+75%</b><span>weekly orders</span></div>
+    <div class="stat"><b data-count="4" data-suf=" agents">4 agents</b><span>built and running</span></div>
+    <div class="stat"><b data-count="12" data-suf=" tools">12 tools</b><span>in my AI stack</span></div>
+  </div>
+
   <section id="results">
-    <div class="sh"><h2>Sales results</h2><a href="results.html">All six reports with captions →</a></div>
-    <p class="prose">Real reports from a healthy food delivery brand in Dubai, where I managed the delivery platforms, sales growth, branding and paid social.</p>
-    <div class="feature">
+    <div class="sh">
+      <div><small>01 · Results</small><h2>Sales I grew</h2><p>Real reports from a healthy food delivery brand in Dubai, where I ran the delivery platforms, sales growth, branding and paid social.</p></div>
+      <a href="results.html">All six reports →</a>
+    </div>
+    <div class="glow feature rv">
       <img src="img/monthly-gross.jpg" alt="Gross sales chart for December 2025 compared with the previous month" width="1600" height="660">
-      <h3>Monthly sales: AED 14,787 → AED 58,570</h3>
-      <p>Gross sales were at AED 14,787 the month before. I grew them to AED 58,570 in December, a 296% increase. Sales stayed above the previous month almost every day, and the month ended stronger than it started.</p>
+      <div>
+        <div class="big">+296%</div>
+        <h3>Monthly sales: AED 14,787 → AED 58,570</h3>
+        <p>Gross sales were at AED 14,787 the month before. I grew them to AED 58,570 in December. Sales stayed above the previous month almost every day, and the month ended stronger than it started.</p>
+      </div>
     </div>
     <div class="thumbs">
-      <div class="thumb"><img src="img/weekly-dashboard.jpg" alt="Weekly dashboard with sales, orders and delivery platform mix" width="1600" height="823" loading="lazy"><b>Orders up 75% in one week</b><span>From about 151 to 264 orders, with order value holding flat.</span></div>
-      <div class="thumb"><img src="img/weekly-gross.jpg" alt="Weekly gross sales chart" width="1600" height="661" loading="lazy"><b>Weekly sales +70%</b><span>AED 10,726 → AED 18,271.</span></div>
-      <div class="thumb"><img src="img/weekly-net.jpg" alt="Weekly net sales chart" width="1600" height="661" loading="lazy"><b>Weekly net sales +32%</b><span>AED 8,943 → AED 11,778.</span></div>
+      <div class="glow thumb rv"><img src="img/weekly-dashboard.jpg" alt="Weekly dashboard with sales, orders and delivery platform mix" width="1600" height="823" loading="lazy"><b>Orders +75% in one week</b><span>From about 151 to 264 orders, with order value holding flat.</span></div>
+      <div class="glow thumb rv"><img src="img/weekly-gross.jpg" alt="Weekly gross sales chart" width="1600" height="661" loading="lazy"><b>Weekly sales +70%</b><span>AED 10,726 → AED 18,271</span></div>
+      <div class="glow thumb rv"><img src="img/weekly-net.jpg" alt="Weekly net sales chart" width="1600" height="661" loading="lazy"><b>Weekly net sales +32%</b><span>AED 8,943 → AED 11,778</span></div>
     </div>
   </section>
 
   <section id="ai">
-    <div class="sh"><h2>AI systems I built</h2></div>
-    <p class="prose">Working systems, not slides. Each one opens as a live page.</p>
+    <div class="sh"><div><small>02 · AI systems</small><h2>Agents I built</h2><p>Working systems, not slides. Every one opens as a live page.</p></div></div>
     <div class="cards">
-      <article class="card">
-        <span class="k">Multi-agent · n8n · Hermes</span>
+      <article class="glow card rv">
+        <span class="k">Multi-agent · n8n · Hermes 4</span>
         <h3>Restaurant Intelligence Loop</h3>
-        <p>Three agents read sales, competitors and social every morning. One model turns it into a short decision brief, sent to Telegram and email at 08:00, and tomorrow's sales measure whether the decision worked.</p>
+        <p>Three agents read sales, competitors and social every morning. One model turns it into a short decision brief on Telegram and email at 08:00, and tomorrow's sales measure whether the decision worked.</p>
         <div class="links">
           <a class="btn primary" href="https://abdelrahmansheta3-design.github.io/restaurant-intelligence/">Open live system</a>
-          <a class="btn" href="https://abdelrahmansheta3-design.github.io/restaurant-intelligence/sales.html">Daily sales brief</a>
           <a class="btn" href="system-map.html">System map</a>
+          <a class="btn" href="https://abdelrahmansheta3-design.github.io/restaurant-intelligence/sales.html">Daily brief</a>
         </div>
       </article>
-      <article class="card">
-        <span class="k">Dashboard · GitHub Pages</span>
-        <h3>Restaurant sales dashboard</h3>
-        <p>Upload a Grubtech or delivery-platform export and see orders, best and falling dishes, new vs returning customers, and what to do this week. Real data stays encrypted.</p>
-        <div class="links">
-          <a class="btn primary" href="https://abdelrahmansheta3-design.github.io/eatnshred-dashboard/demo/">Open demo</a>
-        </div>
-      </article>
-      <article class="card">
+      <article class="glow card rv">
         <span class="k">Agent team · live status</span>
         <h3>Agent HQ</h3>
-        <p>A live office view of my agent team: who is working, what is on their screen, the task board and the activity log. Scout, my job-hunting agent, reports its real runs here.</p>
+        <p>A live office view of my agent team: who is working, what is on their screen, the task board and the activity log. My job-hunting agent reports its real runs here.</p>
         <div class="links"><a class="btn primary" href="agent-hq.html">Open Agent HQ</a></div>
       </article>
-      <article class="card">
-        <span class="k">n8n · runs 3× every morning</span>
+      <article class="glow card rv">
+        <span class="k">Dashboard · encrypted data</span>
+        <h3>Restaurant sales dashboard</h3>
+        <p>Upload a Grubtech or delivery-platform export and see orders, best and falling dishes, new vs returning customers, and what to do this week. Real data stays encrypted.</p>
+        <div class="links"><a class="btn primary" href="https://abdelrahmansheta3-design.github.io/eatnshred-dashboard/demo/">Open demo</a></div>
+      </article>
+      <article class="glow card rv">
+        <span class="k">n8n · 3 runs every morning</span>
         <h3>Scout, the Job Hunter agent</h3>
         <p>Searches LinkedIn, Indeed and Glassdoor, drops roles that don't fit, scores every job with AI and emails a digest with tailored cover notes.</p>
         <ul><li>Runs at 8, 10 and 12 every morning</li><li>Scores each job out of 10</li><li>Read-only: never applies on its own</li></ul>
       </article>
-      <article class="card">
-        <span class="k">Web app</span>
+      <article class="glow card rv">
+        <span class="k">Web app · English &amp; Arabic</span>
         <h3>EAT &amp; TRACK</h3>
-        <p>A calorie and macro tracker built around a healthy-food menu, in English and Arabic.</p>
-        <div class="links">
-          <a class="btn primary" href="eat-track.html">English</a>
-          <a class="btn" href="eat-track-ar.html">العربية</a>
-        </div>
+        <p>A calorie and macro tracker built around a healthy-food menu.</p>
+        <div class="links"><a class="btn primary" href="eat-track.html">English</a><a class="btn" href="eat-track-ar.html">العربية</a></div>
       </article>
     </div>
   </section>
 
   <section id="marketing">
-    <div class="sh"><h2>Marketing</h2></div>
-    <p class="prose">I build complete marketing plans, from market and competitor research to positioning, content, paid ads, partnerships and events, and I track every step against real sales numbers.</p>
+    <div class="sh"><div><small>03 · Marketing</small><h2>Strategy, partnerships, menu</h2><p>Complete marketing plans, from research and positioning to paid ads, partnerships and events, tracked against real sales.</p></div></div>
     <div class="cards">
-      <article class="card">
+      <article class="glow card rv">
         <span class="k">Strategy · 30 slides</span>
         <h3>12-month marketing plan</h3>
-        <p>A full plan prepared for the CEO: market and competitor analysis, SWOT, objectives, influencer strategy, QR-to-subscription funnel, and a quarterly roadmap with a budget and ROAS model built on real UAE ad costs.</p>
+        <p>Prepared for the CEO: competitor analysis, SWOT, objectives, influencer strategy, a QR-to-subscription funnel and a quarterly roadmap with a budget and ROAS model built on real UAE ad costs.</p>
         <ul><li>Target: 150 subscribers in 12 months</li><li>Meta, TikTok, Google and Snapchat costs</li></ul>
       </article>
-      <article class="card">
+      <article class="glow card rv">
         <span class="k">Partnerships · B2B</span>
         <h3>Healthcare referral program</h3>
-        <p>A referral program that lets doctors, nutritionists and trainers recommend the meal plans to their patients, with referral codes, a patient discount and a 10% commission per package.</p>
-        <ul><li>Partner agreement in Arabic and English</li><li>Two-page partner brochure, brief and design direction</li></ul>
+        <p>Doctors, nutritionists and trainers recommend the meal plans to their patients through referral codes, with a patient discount and a 10% commission per package.</p>
+        <ul><li>Partner agreement in Arabic and English</li><li>Two-page partner brochure and design direction</li></ul>
       </article>
-      <article class="card">
+      <article class="glow card rv">
         <span class="k">Menu · data analysis</span>
         <h3>Menu cut from 380 to 100 items</h3>
-        <p>Using 30 days of sales, I found that 183 items never sold and that the best 100 items bring in 90.8% of revenue, then laid out which dishes to keep, merge or cut.</p>
+        <p>30 days of sales showed 183 items never sold, and the best 100 items bring in 90.8% of revenue. I laid out which dishes to keep, merge or cut.</p>
         <div class="links"><a class="btn primary" href="menu.html">Read the analysis</a></div>
       </article>
-      <article class="card">
+      <article class="glow card rv">
         <span class="k">Content · brand</span>
         <h3>Content and branding</h3>
-        <p>Science-led, data-driven content direction for a healthy meal brand, and branding work for Sparkolyte, a new sparkling water brand, from logo adaptation to product visuals.</p>
+        <p>Science-led, data-driven content direction for a healthy meal brand, and branding for Sparkolyte, a new sparkling water brand.</p>
       </article>
     </div>
-    <div class="mk">
-      <div><b>Delivery platforms</b>Careem, Talabat, Keeta, Deliveroo, Noon</div>
-      <div><b>Paid ads</b>Meta Ads Manager, Google Ads</div>
-      <div><b>Analytics</b>Google Analytics, Grubtech, Metricool</div>
-      <div><b>Content</b>Canva, CapCut, SEO, email marketing</div>
-      <div><b>Growth</b>Brand collaborations, events, partnerships</div>
+    <div class="chips">
+      <span class="chip">Careem · Talabat · Keeta · Deliveroo · Noon</span>
+      <span class="chip">Meta Ads · Google Ads</span>
+      <span class="chip">Google Analytics · Grubtech · Metricool</span>
+      <span class="chip">Canva · CapCut · SEO · Email</span>
     </div>
   </section>
 
   <section id="tools">
-    <div class="sh"><h2>AI toolkit</h2><a href="toolkit.html">How I use each one →</a></div>
-    <div class="logos">
-      <div class="logo"><i><img src="logos/claude.svg" alt=""></i><span>Claude</span></div>
-      <div class="logo"><i><img src="logos/codex.svg" alt=""></i><span>Codex</span></div>
-      <div class="logo"><i><img src="logos/gemini.svg" alt=""></i><span>Gemini</span></div>
-      <div class="logo"><i><img src="logos/deepseek.svg" alt=""></i><span>DeepSeek</span></div>
-      <div class="logo"><i><img src="logos/sora.svg" alt=""></i><span>Sora</span></div>
-      <div class="logo"><i><img src="logos/n8n.svg" alt=""></i><span>n8n</span></div>
-      <div class="logo"><i><img src="logos/hermesagent.svg" alt=""></i><span>Hermes Agent</span></div>
-      <div class="logo"><i><img src="logos/openrouter.svg" alt=""></i><span>OpenRouter</span></div>
-      <div class="logo"><i><img src="logos/llmapi.svg" alt=""></i><span>LLM API</span></div>
-      <div class="logo"><i><img src="logos/lmstudio.svg" alt=""></i><span>LM Studio</span></div>
-      <div class="logo"><i><img src="logos/github.svg" alt=""></i><span>GitHub</span></div>
-      <div class="logo"><i><img src="logos/meta.svg" alt=""></i><span>Meta Ads</span></div>
+    <div class="sh"><div><small>04 · Toolkit</small><h2>My AI stack</h2><p>Hover any tool to see how I use it.</p></div><a href="toolkit.html">Download logos →</a></div>
+    <div class="logos" id="logos"></div>
+  </section>
+
+  <section id="contact">
+    <div class="glow contact rv">
+      <div>
+        <small style="font:500 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)">05 · Contact</small>
+        <h2 style="margin-top:8px">Let's build something that sells.</h2>
+        <p>Open to marketing and AI workflow roles in Dubai, on-site or hybrid.</p>
+      </div>
+      <div>
+        <div class="cline"><span>sheeta.ae@gmail.com</span><button type="button" data-copy="sheeta.ae@gmail.com">Copy</button></div>
+        <div class="cline"><span>+971 56 496 6030</span><button type="button" data-copy="+971564966030">Copy</button></div>
+      </div>
     </div>
   </section>
 
-  <footer>
-    <h2>Let's talk</h2>
-    <p class="prose">Open to marketing and AI workflow roles in Dubai, on-site or hybrid.</p>
-    <div class="contact">
-      <span class="chip">sheeta.ae@gmail.com <button type="button" data-copy="sheeta.ae@gmail.com">Copy</button></span>
-      <span class="chip">+971 56 496 6030 <button type="button" data-copy="+971564966030">Copy</button></span>
-    </div>
-  </footer>
+  <footer>Built with Claude Code, n8n and a lot of coffee · Dubai 2026</footer>
 </div>
 
 <script>
-document.querySelectorAll('[data-copy]').forEach(function(b){
-  b.addEventListener('click', function(){
-    var t=b.getAttribute('data-copy');
-    function ok(){ b.textContent='Copied'; setTimeout(function(){b.textContent='Copy';},1600); }
-    try{ navigator.clipboard.writeText(t).then(ok,function(){ b.textContent='Select it'; }); }catch(e){ b.textContent='Select it'; }
-  });
-});
+(function(){
+var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---- agent network background ---- */
+var cv=document.getElementById('net'), ctx=cv.getContext('2d'), W=0,H=0,dpr=Math.min(2,window.devicePixelRatio||1), nodes=[], mouse={x:-999,y:-999}, pulses=[];
+function size(){W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+  var n=Math.round(Math.min(90,W*H/16000));nodes=[];
+  for(var i=0;i<n;i++)nodes.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.6+.6,hub:Math.random()<.08});}
+size();addEventListener('resize',size);
+addEventListener('pointermove',function(e){mouse.x=e.clientX;mouse.y=e.clientY;document.documentElement.style.setProperty('--x',e.clientX+'px');document.documentElement.style.setProperty('--y',e.clientY+'px');},{passive:true});
+var LINK=130;
+function frame(){
+  ctx.clearRect(0,0,W,H);
+  for(var i=0;i<nodes.length;i++){var a=nodes[i];
+    if(!reduce){a.x+=a.vx;a.y+=a.vy;if(a.x<0||a.x>W)a.vx*=-1;if(a.y<0||a.y>H)a.vy*=-1;}
+    var dm=Math.hypot(a.x-mouse.x,a.y-mouse.y);
+    for(var j=i+1;j<nodes.length;j++){var b=nodes[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<LINK){var o=(1-d/LINK)*.22;ctx.strokeStyle='rgba(124,156,255,'+o+')';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+        if(!reduce&&Math.random()<.0009&&pulses.length<14)pulses.push({a:a,b:b,t:0});}}
+    if(dm<180){ctx.strokeStyle='rgba(94,231,214,'+(1-dm/180)*.55+')';ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(mouse.x,mouse.y);ctx.stroke();}
+    var glow=dm<180?1:0;
+    ctx.fillStyle=a.hub?'rgba(255,192,107,.9)':(glow?'rgba(94,231,214,.95)':'rgba(170,186,230,.55)');
+    ctx.beginPath();ctx.arc(a.x,a.y,a.hub?a.r+1.4:a.r+glow,0,6.283);ctx.fill();
+    if(a.hub){ctx.fillStyle='rgba(255,192,107,.12)';ctx.beginPath();ctx.arc(a.x,a.y,9,0,6.283);ctx.fill();}
+  }
+  for(var k=pulses.length-1;k>=0;k--){var p=pulses[k];p.t+=.018;if(p.t>=1){pulses.splice(k,1);continue;}
+    var x=p.a.x+(p.b.x-p.a.x)*p.t,y=p.a.y+(p.b.y-p.a.y)*p.t;ctx.fillStyle='rgba(94,231,214,.95)';ctx.shadowColor='#5ee7d6';ctx.shadowBlur=10;ctx.beginPath();ctx.arc(x,y,2,0,6.283);ctx.fill();ctx.shadowBlur=0;}
+  if(!reduce)requestAnimationFrame(frame);
+}
+frame();
+
+/* ---- rotating role ---- */
+var words=['write the daily sales brief','watch every competitor','score jobs every morning','find the dishes that sell','turn data into decisions'],wi=0,rot=document.getElementById('rot');
+if(!reduce)(function cycle(){var w=words[wi],i=w.length;
+  (function del(){if(i>=0){rot.textContent=w.slice(0,i--);setTimeout(del,22);}else{wi=(wi+1)%words.length;var nw=words[wi],k=0;(function typ(){if(k<=nw.length){rot.textContent=nw.slice(0,k++);setTimeout(typ,45);}else setTimeout(cycle,2200);})();}})();
+})();
+
+/* ---- live agent log ---- */
+var C={Scout:'#ffc06b',Sales:'#7c9cff',Market:'#5ee7d6',Social:'#d59bff',Hermes:'#9fb3ff',n8n:'#ff7a93'};
+var LINES=[['n8n','workflow fired · Daily Restaurant Report'],['Sales','pulled 96 orders · net AED 5,325'],['Sales','top item: Grilled Chicken Rice Bowl ×22'],['Market','scanned 3 competitors · 0 new offers'],['Social','peak engagement window 7–9 PM'],['Hermes','writing brief · guardrails on'],['Hermes','<span class="ok">✓</span> 2 actions · no invented facts'],['n8n','<span class="ok">✓</span> brief sent to Telegram + email'],['Scout','searching LinkedIn, Indeed, Glassdoor'],['Scout','21 new jobs · dropped sales roles'],['Scout','scored 21 jobs · 7 rated 7/10+'],['Scout','<span class="ok">✓</span> digest emailed with cover notes'],['Social','drafted 1 post · waiting for approval'],['Sales','lunch peak holding at 1–2 PM']];
+var logEl=document.getElementById('log'),li=0,clock=new Date();clock.setHours(7,58,0);
+function addLine(){var l=LINES[li%LINES.length];li++;clock=new Date(clock.getTime()+ (Math.random()*40+5)*1000);
+  var d=document.createElement('div');d.innerHTML='<span class="t">'+clock.toTimeString().slice(0,8)+'</span><span class="w" style="--c:'+C[l[0]]+'">'+l[0].padEnd(6,' ')+'</span><span class="m">'+l[1]+'</span>';
+  logEl.appendChild(d);while(logEl.children.length>11)logEl.firstChild.remove();}
+for(var s=0;s<9;s++)addLine();
+if(!reduce)setInterval(addLine,1600);
+
+/* ---- cursor-follow glow on cards ---- */
+document.querySelectorAll('.glow').forEach(function(el){el.addEventListener('pointermove',function(e){var r=el.getBoundingClientRect();el.style.setProperty('--mx',(e.clientX-r.left)+'px');el.style.setProperty('--my',(e.clientY-r.top)+'px');});});
+
+/* ---- logos with hover tips ---- */
+var TOOLS=[['claude','Claude','#d97757','My main AI partner. With Claude Code I build dashboards, pages and automations.'],['n8n','n8n','#ea4b71','Runs my agents: the job hunter and the daily restaurant brief.'],['hermesagent','Hermes Agent','#9fb3ff','An AI agent I run on my own Mac, close to my files and tools.'],['openrouter','OpenRouter','#c8ff00','One API for many models. My agents call Hermes through it.'],['codex','Codex','#7a9dff','Writes and reviews code alongside Claude Code.'],['gemini','Gemini','#3186ff','Research and second opinions on copy and campaign ideas.'],['deepseek','DeepSeek','#4d6bfe','Fast, low-cost model for bulk analysis and drafts.'],['sora','Sora','#0968da','AI video for short social content and ad concepts.'],['lmstudio','LM Studio','#9aa6c4','Runs models locally for private data and offline tests.'],['llmapi','LLM API','#9aa6c4','Unified access to several language models.'],['github','GitHub','#e8ecf7','Hosts my dashboards and agent systems as live pages.'],['meta','Meta Ads','#0082fb','Paid campaigns on Instagram and Facebook.']];
+var lg=document.getElementById('logos');
+TOOLS.forEach(function(t){var d=document.createElement('div');d.className='logo rv';d.tabIndex=0;d.style.setProperty('--bc',t[2]);
+  d.innerHTML='<i><img src="logos/'+t[0]+'.svg" alt="" width="34" height="34"></i><span>'+t[1]+'</span><div class="tip"></div>';d.querySelector('.tip').textContent=t[3];lg.appendChild(d);});
+
+/* ---- count-up + reveal ---- */
+function countUp(el){var to=+el.dataset.count,pre=el.dataset.pre||'',suf=el.dataset.suf||'',t0=null;
+  function step(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/1400),v=Math.round(to*(1-Math.pow(1-p,3)));el.textContent=pre+v+suf;if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
+if('IntersectionObserver' in window && !reduce){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');if(e.target.dataset.count)countUp(e.target);io.unobserve(e.target);}});},{threshold:.15});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
+  document.querySelectorAll('[data-count]').forEach(function(el){io.observe(el);});
+  setTimeout(function(){document.querySelectorAll('.rv').forEach(function(el){el.classList.add('in');});},2500);
+} else document.querySelectorAll('.rv').forEach(function(el){el.classList.add('in');});
+
+/* ---- copy ---- */
+document.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){var t=b.dataset.copy;
+  try{navigator.clipboard.writeText(t).then(function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy';},1500);},function(){b.textContent='Select it';});}catch(e){b.textContent='Select it';}});});
+})();
 </script>
-</body></html>
+</body>
+</html>

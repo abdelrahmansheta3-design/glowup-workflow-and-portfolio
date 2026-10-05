@@ -1,0 +1,49 @@
+{
+ "lastRun": "2026-10-06T04:00:12Z",
+ "reportDate": "2026-10-05",
+ "rowsProcessed": 450,
+ "agents": [
+  {
+   "id": "ads",
+   "name": "Ads Analyst",
+   "state": "done",
+   "result": "7 ads flagged \u00b7 ROAS 4.8x"
+  },
+  {
+   "id": "sales",
+   "name": "Sales Coach",
+   "state": "done",
+   "result": "Team A 12 min \u00b7 Team B 41 min"
+  },
+  {
+   "id": "ops",
+   "name": "Operations",
+   "state": "done",
+   "result": "24 attended \u00b7 7 no-shows"
+  },
+  {
+   "id": "reviews",
+   "name": "Reviews Monitor",
+   "state": "done",
+   "result": "3 new reviews \u00b7 avg 4.7"
+  },
+  {
+   "id": "reports",
+   "name": "Team Reports Reader",
+   "state": "done",
+   "result": "34/40 reports"
+  },
+  {
+   "id": "brief",
+   "name": "Brief Writer",
+   "state": "done",
+   "result": "Brief sent to Telegram 08:00"
+  }
+ ],
+ "totals": {
+  "revenue": 33650,
+  "leads": 118,
+  "booked": 31,
+  "adSpend": 2960
+ }
+}

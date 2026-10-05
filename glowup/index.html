@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Glow Up Clinic · Growth Intelligence</title>
+<meta name="description" content="Demo: AI growth dashboard for Glow Up Clinic — ads, sales team, services, doctors and the daily Telegram brief.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: black-and-gold presentation dashboard. Sticky header with the clinic logo and tabs; each tab = one report with KPIs, a chart or table, and a "What to do" box. */
+:root{
+  --bg:#070707; --panel:#111111; --panel-2:#161513; --line:#26231d; --line-2:#3a342a;
+  --fg:#f4efe6; --muted:#a69f92; --faint:#6f6a60;
+  --gold:#e9b45a; --gold-hi:#fbc668; --gold-lo:#b8843b; --gold-soft:rgba(233,180,90,.12);
+  --good:#4fd18b; --warn:#ff8a3d; --bad:#ff5d6c;
+  --display:"Cinzel",Georgia,serif;
+  --body:"Manrope",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55;
+  background-image:radial-gradient(900px 500px at 85% -10%,rgba(233,180,90,.10),transparent 60%),radial-gradient(700px 400px at -10% 30%,rgba(233,180,90,.05),transparent 60%);background-attachment:fixed}
+img{max-width:100%;display:block}
+.num{font-variant-numeric:tabular-nums}
+.gold-text{background:linear-gradient(100deg,var(--gold-hi),var(--gold-lo) 60%,var(--gold-hi));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(7,7,7,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.hwrap{max-width:1240px;margin:0 auto;padding-inline:20px;display:flex;align-items:center;gap:18px;padding-block:12px;flex-wrap:wrap}
+.hwrap img{height:44px;width:auto}
+.hmeta{display:flex;flex-direction:column;line-height:1.2}
+.hmeta b{font:600 13px var(--display);letter-spacing:.14em;color:var(--gold)}
+.hmeta span{font:12px var(--mono);color:var(--muted)}
+.demo{margin-left:auto;font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--gold);border:1px solid var(--line-2);border-radius:999px;padding:5px 10px}
+nav.tabs{max-width:1240px;margin:0 auto;padding-inline:20px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{flex:none;font:600 13.5px var(--body);color:var(--muted);background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px 12px;cursor:pointer;white-space:nowrap}
+nav.tabs button:hover{color:var(--fg)}
+nav.tabs button[aria-selected="true"]{color:var(--gold-hi);border-bottom-color:var(--gold)}
+button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(--gold-hi);outline-offset:2px}
+
+main{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:28px 80px}
+.tab{display:grid;gap:18px}
+.tab[hidden]{display:none}
+.title{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+h1,h2{font-family:var(--display);font-weight:600;letter-spacing:.04em;margin:0}
+h1{font-size:clamp(24px,3.4vw,34px)}
+h2{font-size:17px;letter-spacing:.06em}
+.sub{color:var(--muted);margin:6px 0 0;max-width:70ch}
+.period{font:12.5px var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+
+.card{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0}
+.card-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.card-h small{font:12px var(--mono);color:var(--faint)}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g32{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+
+/* KPI tiles */
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.kpi{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.kpi .l{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kpi .v{font:800 26px/1.15 var(--body);margin-top:6px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi .v small{font-size:13px;color:var(--muted);font-weight:600;margin-left:3px}
+.kpi .d{font:12px var(--mono);margin-top:4px}
+.up{color:var(--good)} .down{color:var(--bad)} .flat{color:var(--muted)}
+
+/* status chips */
+.st{display:inline-flex;align-items:center;gap:6px;font:600 11.5px var(--mono);padding:3px 9px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.st.win{color:var(--good)} .st.watch{color:var(--warn)} .st.kill{color:var(--bad)}
+.st::before{font-size:11px}
+.st.win::before{content:"▲"} .st.watch::before{content:"●"} .st.kill::before{content:"■"}
+
+/* tables */
+.tw{overflow-x:auto;margin:0 -4px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:760px}
+th{font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:9px 10px;border-bottom:1px solid var(--line-2);white-space:nowrap;cursor:pointer;user-select:none}
+th.r,td.r{text-align:right}
+th:hover{color:var(--gold-hi)}
+td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.click{cursor:pointer}
+tr.click:hover td{background:rgba(233,180,90,.05)}
+tr.sel td{background:rgba(233,180,90,.09)}
+td b{font-weight:700}
+td .s{display:block;font-size:12px;color:var(--muted)}
+.cellbar{position:relative;min-width:90px}
+.cellbar i{position:absolute;right:10px;bottom:5px;height:3px;max-width:calc(100% - 20px);border-radius:2px;background:linear-gradient(90deg,var(--gold-lo),var(--gold-hi));opacity:.55}
+.cellbar span{position:relative}
+.pill{font:500 11px var(--mono);color:var(--muted);border:1px solid var(--line-2);border-radius:6px;padding:2px 7px;white-space:nowrap}
+
+/* bars */
+.bars{display:grid;gap:10px}
+.bar{display:grid;grid-template-columns:150px minmax(0,1fr) 92px;gap:12px;align-items:center;font-size:13.5px}
+.bar .track{height:12px;background:#1b1916;border-radius:0 6px 6px 0;position:relative}
+.bar .fill{position:absolute;inset:0 auto 0 0;border-radius:0 6px 6px 0;background:linear-gradient(90deg,var(--gold-lo),var(--gold-hi))}
+.bar .fill.grey{background:#4a4640}
+.bar .fill.bad{background:var(--bad)}
+.bar .val{text-align:right;font-variant-numeric:tabular-nums;color:var(--fg)}
+.bar .name{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-bottom:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+
+/* funnel */
+.funnel{display:grid;gap:8px}
+.fstep{display:grid;grid-template-columns:130px minmax(0,1fr) 130px;gap:12px;align-items:center}
+.fstep .lab{color:var(--muted);font-size:13.5px}
+.fstep .blk{height:34px;border-radius:0 8px 8px 0;background:linear-gradient(90deg,var(--gold-lo),var(--gold-hi));display:flex;align-items:center;padding-left:12px;color:#1a1206;font-weight:800;font-variant-numeric:tabular-nums;min-width:56px}
+.fstep .rt{font:12.5px var(--mono);color:var(--muted);text-align:right}
+
+/* line chart */
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.tt{position:absolute;pointer-events:none;background:#0d0c0a;border:1px solid var(--line-2);border-radius:10px;padding:8px 11px;font-size:12.5px;white-space:nowrap;opacity:0;transition:opacity .12s;z-index:5;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.tt b{color:var(--gold-hi)}
+
+/* advice */
+.advice{border:1px solid rgba(233,180,90,.35);background:linear-gradient(180deg,rgba(233,180,90,.08),rgba(233,180,90,.02));border-radius:16px;padding:18px 20px}
+.advice h3{font:600 14px var(--display);letter-spacing:.1em;color:var(--gold-hi);margin:0 0 10px;display:flex;gap:8px;align-items:center}
+.advice ol{margin:0;padding-left:20px;display:grid;gap:8px}
+.advice li::marker{color:var(--gold);font-weight:700}
+.advice li b{color:var(--fg)}
+.advice li{color:#d8d1c3}
+
+/* problem list */
+.issues{display:grid;gap:10px}
+.issue{border:1px solid var(--line);border-left:3px solid var(--bad);border-radius:10px;padding:12px 14px;background:rgba(255,93,108,.04)}
+.issue.w{border-left-color:var(--warn);background:rgba(255,138,61,.04)}
+.issue b{display:block;margin-bottom:3px}
+.issue p{margin:0;color:var(--muted);font-size:13.5px}
+.issue .fix{margin-top:6px;color:#d8d1c3;font-size:13.5px}
+.issue .fix::before{content:"Fix → ";color:var(--gold-hi);font-weight:700}
+
+/* ad drill-down */
+.drill{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+.dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 14px;font-size:13.5px;margin:0}
+.dl dt{color:var(--muted);font:12px var(--mono);padding-top:2px}
+.dl dd{margin:0}
+
+/* alerts */
+.alert{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.alert .ic{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-weight:800;font-size:14px}
+.alert.r .ic{background:rgba(255,93,108,.15);color:var(--bad)}
+.alert.o .ic{background:rgba(255,138,61,.15);color:var(--warn)}
+.alert.g .ic{background:rgba(79,209,139,.15);color:var(--good)}
+.alert b{display:block} .alert span{color:var(--muted);font-size:13.5px}
+
+/* telegram */
+.tg{max-width:560px;background:#0e1621;border-radius:18px;padding:16px;border:1px solid #1c2733}
+.tg-h{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:#cfd8e3;font-size:13px}
+.tg-h i{width:34px;height:34px;border-radius:50%;background:#000;border:1px solid var(--gold-lo);display:grid;place-items:center;font:700 12px var(--display);color:var(--gold-hi);font-style:normal}
+.bubble{background:#182533;border-radius:14px 14px 14px 4px;padding:12px 14px;white-space:pre-line;font-size:14px;line-height:1.6;color:#e9eef4}
+.bmeta{text-align:right;font:11px var(--mono);color:#6d7f92;margin-top:6px}
+
+/* system diagram */
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:stretch}
+.fcol{display:grid;gap:10px;align-content:start}
+.fcol h4{margin:0 0 2px;font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.node{border:1px solid var(--line-2);border-radius:12px;padding:10px 12px;background:var(--panel-2);font-size:13.5px}
+.node b{display:block}
+.node span{color:var(--muted);font-size:12.5px}
+.node.ai{border-color:rgba(233,180,90,.5);box-shadow:0 0 24px -10px rgba(233,180,90,.6)}
+
+footer{max-width:1240px;margin:0 auto;padding:20px;color:var(--faint);font:12px var(--mono);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line)}
+@media (max-width:1100px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:860px){.g2,.g3,.g32,.drill{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.bar{grid-template-columns:110px minmax(0,1fr) 80px}.fstep{grid-template-columns:96px minmax(0,1fr) 92px}.demo{margin-left:0}}
+@media (max-width:520px){.flow{grid-template-columns:minmax(0,1fr)}.hwrap img{height:36px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hwrap">
+    <img src="logo.jpg" alt="Glow Up Clinic" width="1280" height="424">
+    <div class="hmeta"><b>GROWTH INTELLIGENCE</b><span id="asof"></span></div>
+    <span class="demo">Demo data · presentation</span>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Reports">
+    <button role="tab" aria-selected="true" data-tab="overview">Overview</button>
+    <button role="tab" aria-selected="false" data-tab="ads">Ads performance</button>
+    <button role="tab" aria-selected="false" data-tab="audience">Audience &amp; targeting</button>
+    <button role="tab" aria-selected="false" data-tab="sales">Sales team</button>
+    <button role="tab" aria-selected="false" data-tab="services">Services</button>
+    <button role="tab" aria-selected="false" data-tab="doctors">Doctors</button>
+    <button role="tab" aria-selected="false" data-tab="report">Daily Telegram report</button>
+    <button role="tab" aria-selected="false" data-tab="system">How it works</button>
+  </nav>
+</header>
+
+<main>
+  <!-- OVERVIEW -->
+  <section class="tab" id="overview">
+    <div class="title"><div><h1>Clinic at a glance</h1><p class="sub">Every lead from Facebook, Instagram, TikTok and Snapchat, followed all the way to the payment at reception.</p></div><span class="period">Last 30 days · vs previous 30</span></div>
+    <div class="kpis" id="kpis"></div>
+    <div class="grid g32">
+      <div class="card"><div class="card-h"><h2>Revenue per day</h2><small>AED · hover for detail</small></div><div class="chart" id="trend"></div></div>
+      <div class="card"><div class="card-h"><h2>Lead to payment</h2><small>all channels</small></div><div class="funnel" id="funnel"></div></div>
+    </div>
+    <div class="grid g2">
+      <div class="card"><div class="card-h"><h2>Spend vs revenue by platform</h2><small>AED</small></div>
+        <div class="legend"><span><i style="background:#4a4640"></i>Ad spend</span><span><i style="background:var(--gold)"></i>Revenue</span></div>
+        <div class="bars" id="platBars"></div></div>
+      <div class="card"><div class="card-h"><h2>Needs attention today</h2><small>auto-detected</small></div><div class="grid" style="gap:10px" id="alerts"></div></div>
+    </div>
+    <div class="advice"><h3>✦ What to do this week</h3><ol id="advOverview"></ol></div>
+  </section>
+
+  <!-- ADS -->
+  <section class="tab" id="ads" hidden>
+    <div class="title"><div><h1>Which ads bring patients, which don't</h1><p class="sub">Every live ad ranked by revenue it brought through the door, not by clicks. Click any row to see why it works or fails.</p></div>
+      <span class="period">Last 30 days · 12 live ads</span></div>
+    <div class="kpis" id="adKpis"></div>
+    <div class="card"><div class="card-h"><h2>All ads</h2><small>click a row · click a header to sort</small></div><div class="tw"><table id="adTable"></table></div></div>
+    <div class="card" id="drill"></div>
+    <div class="grid g2">
+      <div class="card"><div class="card-h"><h2>Problems found in the ads</h2><small>by the Ads Analyst agent</small></div><div class="issues" id="adIssues"></div></div>
+      <div class="advice"><h3>✦ How to get more from the same budget</h3><ol id="advAds"></ol></div>
+    </div>
+  </section>
+
+  <!-- AUDIENCE -->
+  <section class="tab" id="audience" hidden>
+    <div class="title"><div><h1>Are the ads reaching the right people?</h1><p class="sub">The clinic's target patient: women and men 25–45 living in Dubai, GCC and Arab expats plus Western expats, ready to pay for premium treatment. Here is who the ads actually brought.</p></div><span class="period">Profile from the sales team's lead notes</span></div>
+    <div class="grid g2">
+      <div class="card"><div class="card-h"><h2>Lead profile vs target</h2><small>share of leads</small></div>
+        <div class="legend"><span><i style="background:var(--gold)"></i>Target segment</span><span><i style="background:#4a4640"></i>Outside target</span></div>
+        <div class="bars" id="natBars"></div></div>
+      <div class="card"><div class="card-h"><h2>Age of leads</h2><small>share of leads · target 25–45</small></div><div class="bars" id="ageBars"></div></div>
+    </div>
+    <div class="grid g2">
+      <div class="card"><div class="card-h"><h2>Where leads live</h2><small>clinic is in Dubai</small></div><div class="bars" id="cityBars"></div></div>
+      <div class="card"><div class="card-h"><h2>On-target leads by ad</h2><small>% of each ad's leads inside the target</small></div><div class="bars" id="onTarget"></div></div>
+    </div>
+    <div class="grid g2">
+      <div class="card"><div class="card-h"><h2>Why ads reach the wrong people</h2><small>root causes found</small></div><div class="issues" id="audIssues"></div></div>
+      <div class="advice"><h3>✦ How to fix the targeting</h3><ol id="advAud"></ol></div>
+    </div>
+  </section>
+
+  <!-- SALES -->
+  <section class="tab" id="sales" hidden>
+    <div class="title"><div><h1>Sales team performance</h1><p class="sub">20 agents in two teams. Speed matters most: a lead answered in under 5 minutes books about 3× more often than one answered after an hour.</p></div>
+      <label class="period">Team <select id="teamSel" style="background:transparent;color:var(--fg);border:0;font:inherit"><option value="all">Both teams</option><option value="A">Team A · Rana</option><option value="B">Team B · Omar</option></select></label></div>
+    <div class="kpis" id="salesKpis"></div>
+    <div class="grid g2">
+      <div class="card"><div class="card-h"><h2>Team A vs Team B</h2><small>last 30 days</small></div><div class="tw"><table id="teamTable" style="min-width:420px"></table></div></div>
+      <div class="card"><div class="card-h"><h2>Response time vs booking rate</h2><small>all leads</small></div><div class="bars" id="speedBars"></div></div>
+    </div>
+    <div class="card"><div class="card-h"><h2>Agent leaderboard</h2><small>click a header to sort</small></div><div class="tw"><table id="agentTable"></table></div></div>
+    <div class="grid g2">
+      <div class="card"><div class="card-h"><h2>Coaching flags</h2><small>by the Sales Coach agent</small></div><div class="issues" id="salesIssues"></div></div>
+      <div class="advice"><h3>✦ How to close more of the leads we already pay for</h3><ol id="advSales"></ol></div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="tab" id="services" hidden>
+    <div class="title"><div><h1>Services</h1><p class="sub">What patients come for, what each one is worth, and which platform brings them.</p></div><span class="period">Last 30 days</span></div>
+    <div class="grid g2">
+      <div class="card"><div class="card-h"><h2>Revenue by service</h2><small>AED</small></div><div class="bars" id="svcBars"></div></div>
+      <div class="card"><div class="card-h"><h2>Revenue by department</h2><small>AED</small></div><div class="bars" id="deptBars"></div></div>
+    </div>
+    <div class="card"><div class="card-h"><h2>Service detail</h2><small>click a header to sort</small></div><div class="tw"><table id="svcTable"></table></div></div>
+    <div class="advice"><h3>✦ Service opportunities</h3><ol id="advSvc"></ol></div>
+  </section>
+
+  <!-- DOCTORS -->
+  <section class="tab" id="doctors" hidden>
+    <div class="title"><div><h1>Doctors</h1><p class="sub">How full each schedule is and how many patients come back. Names and specialties are placeholders until the real roster is connected.</p></div><span class="period">Last 30 days</span></div>
+    <div class="card"><div class="card-h"><h2>Schedule utilisation</h2><small>% of available slots booked · target 80%</small></div><div class="bars" id="docBars"></div></div>
+    <div class="card"><div class="card-h"><h2>Doctor detail</h2><small>click a header to sort</small></div><div class="tw"><table id="docTable"></table></div></div>
+    <div class="advice"><h3>✦ Scheduling opportunities</h3><ol id="advDoc"></ol></div>
+  </section>
+
+  <!-- REPORT -->
+  <section class="tab" id="report" hidden>
+    <div class="title"><div><h1>What the owner receives every morning</h1><p class="sub">At 08:00 the agents read yesterday's ads, leads and bookings and send one short brief to Telegram, with the numbers and the actions for today. Urgent alerts arrive during the day.</p></div></div>
+    <div class="grid g2">
+      <div>
+        <div class="tg"><div class="tg-h"><i>GU</i><div><b>Glow Up Intelligence</b><br><span style="color:#6d7f92">bot</span></div></div>
+          <div class="bubble" id="tgDaily"></div><div class="bmeta">08:00 ✓✓</div></div>
+      </div>
+      <div class="grid" style="gap:14px;align-content:start">
+        <div class="tg"><div class="tg-h"><i>GU</i><div><b>Glow Up Intelligence</b><br><span style="color:#6d7f92">urgent alert</span></div></div>
+          <div class="bubble">⚠️ Lead response is slow right now
+11 new leads in the last hour, 6 still not contacted after 15 minutes.
+Most are from the Instagram Botox reel.
+→ Team B: please pick these up now.</div><div class="bmeta">13:42 ✓✓</div></div>
+        <div class="tg"><div class="tg-h"><i>GU</i><div><b>Glow Up Intelligence</b><br><span style="color:#6d7f92">weekly ads review · Sunday</span></div></div>
+          <div class="bubble">📊 Ads week in review
+Best: IG · 6D Veneers before/after — ROAS 9.2×
+Worst: FB · Lip filler offer — AED 2,860 spent, 0 patients
+Recommendation: pause the lip filler ad, move its budget to the veneers carousel and the men's Botox reel.</div><div class="bmeta">Sun 09:00 ✓✓</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SYSTEM -->
+  <section class="tab" id="system" hidden>
+    <div class="title"><div><h1>How the system works</h1><p class="sub">Everything the clinic already uses is connected once. Three AI agents read it every day and turn it into decisions, without anyone building reports by hand.</p></div></div>
+    <div class="card"><div class="flow">
+      <div class="fcol"><h4>1 · Sources</h4>
+        <div class="node"><b>Meta Ads</b><span>Facebook &amp; Instagram campaigns, ad sets, ads</span></div>
+        <div class="node"><b>TikTok Ads · Snapchat Ads</b><span>spend, clicks, leads</span></div>
+        <div class="node"><b>Leads &amp; WhatsApp</b><span>every inquiry, who answered, how fast</span></div>
+        <div class="node"><b>Booking system</b><span>appointments, show-ups, doctors</span></div>
+        <div class="node"><b>Reception payments</b><span>what each patient actually paid</span></div></div>
+      <div class="fcol"><h4>2 · Automation</h4>
+        <div class="node"><b>n8n workflows</b><span>collect and match every lead to its ad and its payment, every hour</span></div>
+        <div class="node"><b>Clinic database</b><span>stays inside the clinic's own accounts</span></div></div>
+      <div class="fcol"><h4>3 · AI agents</h4>
+        <div class="node ai"><b>Ads Analyst</b><span>finds winning and losing ads, wrong audiences, budget waste</span></div>
+        <div class="node ai"><b>Sales Coach</b><span>response time, follow-ups, agent coaching</span></div>
+        <div class="node ai"><b>Operations</b><span>doctor schedules, no-shows, service demand</span></div></div>
+      <div class="fcol"><h4>4 · Delivery</h4>
+        <div class="node"><b>Telegram · 08:00</b><span>daily brief to the owner and managers</span></div>
+        <div class="node"><b>Urgent alerts</b><span>slow response, ad overspend, no-show spikes</span></div>
+        <div class="node"><b>This dashboard</b><span>live, for the owner and team leaders</span></div></div>
+    </div></div>
+    <div class="grid g2">
+      <div class="advice"><h3>✦ Patient privacy by design</h3><ol>
+        <li><b>No patient names or phone numbers</b> ever leave the clinic's systems. Reports carry numbers only.</li>
+        <li>Each person sees what their role needs: owner sees everything, team leaders see their team.</li>
+        <li>Built to respect UAE health data rules from day one.</li></ol></div>
+      <div class="advice"><h3>✦ Roll-out plan</h3><ol>
+        <li><b>Week 1:</b> connect ads accounts, lead sources and booking system.</li>
+        <li><b>Week 2:</b> match leads to payments, switch the dashboard to real data.</li>
+        <li><b>Week 3:</b> agents start the 08:00 Telegram brief and live alerts.</li>
+        <li><b>Week 4:</b> review with the owner, tune targets and alerts.</li></ol></div>
+    </div>
+  </section>
+</main>
+<footer><span>Glow Up Clinic · Growth Intelligence · demo with sample data</span><span>Built by Abd Elrahman Sheta</span></footer>
+<div class="tt" id="tt"></div>
+
+<script>
+(function(){
+/* ============ seeded demo data ============ */
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+var R=rng(20261005);
+var fmt=function(n){return Math.round(n).toLocaleString('en-US');};
+var aed=function(n){return 'AED '+fmt(n);};
+var k=function(n){return n>=1e6?(n/1e6).toFixed(2)+'M':n>=1000?(n/1000).toFixed(n>=100000?0:1)+'k':fmt(n);};
+var pct=function(n,d){return (d==null?n:n).toFixed(d==null?0:d)+'%';};
+
+var SERVICES={
+ botox:{n:'Botox',dept:'Aesthetics',price:1200},
+ filler:{n:'Fillers (women)',dept:'Aesthetics',price:1500},
+ mbotox:{n:"Men's Botox & filler",dept:'Aesthetics',price:1450},
+ iv:{n:'IV drip',dept:'Wellness',price:650},
+ facial:{n:'Facial',dept:'Skin',price:450},
+ peel:{n:'Chemical peel',dept:'Skin',price:750},
+ hijama:{n:'Hijama (cupping)',dept:'Wellness',price:250},
+ clean:{n:'Teeth cleaning',dept:'Dental',price:350},
+ implant:{n:'Dental implant',dept:'Dental',price:4800},
+ v3d:{n:'3D veneers',dept:'Dental',price:9500},
+ v6d:{n:'6D veneers',dept:'Dental',price:18000},
+ lipo:{n:'Liposuction',dept:'Surgery',price:14000},
+ bleph:{n:'Eyelid surgery',dept:'Surgery',price:9500}
+};
+/* ads: spend, CTR, leads, booking rate, show rate, on-target share */
+var ADS=[
+ {id:1,p:'Instagram',name:'Botox · "Fresh look in 15 minutes" reel',svc:'botox',fmt:'Reel · Arabic',aud:'Women 25–45 · Dubai 15 km · Arabic',spend:12400,ctr:2.4,leads:388,book:0.22,show:.81,on:.86,status:'win'},
+ {id:2,p:'Instagram',name:'6D veneers · before/after carousel',svc:'v6d',fmt:'Carousel · English',aud:'25–45 · Dubai · Interests: luxury, beauty',spend:9800,ctr:1.9,leads:60,book:0.1,show:.84,on:.82,status:'win'},
+ {id:3,p:'Instagram',name:"Men's Botox · \"Look sharp\" reel",svc:'mbotox',fmt:'Reel · English',aud:'Men 28–45 · Dubai · Business, fitness',spend:6200,ctr:2.1,leads:164,book:0.2,show:.8,on:.79,status:'win'},
+ {id:4,p:'Facebook',name:'Dental implant · "AED 99 consultation"',svc:'implant',fmt:'Lead form · English',aud:'Advantage+ · UAE-wide',spend:8600,ctr:3.1,leads:512,book:0.012,show:0.35,on:.27,status:'kill'},
+ {id:5,p:'TikTok',name:'Liposuction · transformation video',svc:'lipo',fmt:'Video · English',aud:'18–45 · UAE · Broad',spend:9400,ctr:1.6,leads:301,book:0.015,show:0.5,on:.38,status:'watch'},
+ {id:6,p:'Snapchat',name:'IV drip · "Recover after the weekend"',svc:'iv',fmt:'Story · English',aud:'18–34 · Dubai',spend:5200,ctr:1.2,leads:236,book:0.14,show:.71,on:.41,status:'watch'},
+ {id:7,p:'Facebook',name:'Hijama · "Detox the natural way"',svc:'hijama',fmt:'Image · Arabic',aud:'30–55 · Dubai · Arabic',spend:2900,ctr:1.8,leads:214,book:.34,show:.83,on:.88,status:'win'},
+ {id:8,p:'TikTok',name:'Teeth cleaning · "AED 199 this month"',svc:'clean',fmt:'Video · Arabic',aud:'20–40 · Dubai',spend:5600,ctr:2.0,leads:298,book:.27,show:.74,on:.69,status:'watch'},
+ {id:9,p:'Facebook',name:'Eyelid surgery · doctor explains',svc:'bleph',fmt:'Video · English',aud:'35–55 · Dubai · Women',spend:7200,ctr:0.9,leads:96,book:0.04,show:.78,on:.43,status:'watch'},
+ {id:10,p:'Instagram',name:'Chemical peel & facial · client UGC',svc:'peel',fmt:'Reel · Arabic',aud:'Women 22–40 · Dubai',spend:4100,ctr:2.2,leads:176,book:0.2,show:.79,on:.84,status:'win'},
+ {id:11,p:'Snapchat',name:'3D veneers · smile reveal',svc:'v3d',fmt:'Story · Arabic',aud:'20–40 · UAE-wide',spend:6400,ctr:1.4,leads:208,book:0.03,show:0.55,on:.52,status:'watch'},
+ {id:12,p:'Facebook',name:'Lip filler · "Limited offer"',svc:'filler',fmt:'Image · English',aud:'Women 18–45 · Audience Network on',spend:2860,ctr:4.6,leads:143,book:.03,show:0,on:.31,status:'kill'}
+];
+ADS.forEach(function(a){var s=SERVICES[a.svc];a.svcN=s.n;a.cpl=a.spend/a.leads;a.booked=Math.round(a.leads*a.book);a.patients=Math.round(a.booked*a.show);a.revenue=a.patients*s.price;a.roas=a.revenue/a.spend;a.cpp=a.patients?a.spend/a.patients:null;a.impr=Math.round(a.spend/(18+R()*14)*1000);a.clicks=Math.round(a.impr*a.ctr/100);});
+
+/* ad diagnostics */
+var WHY={
+ 1:{good:['Arabic hook in the first 2 seconds matches the target audience','15 km radius around the clinic: leads can actually come in','Short reel, real doctor on camera builds trust'],bad:[],fix:'Raise budget 30% and test a second version with a different first line.'},
+ 2:{good:['High-ticket service: few patients, big revenue','Before/after proof answers the main doubt','Interests filter for people who spend on luxury'],bad:['Cost per lead is high, which is normal for this ticket size'],fix:'Keep running. Add a retargeting ad for people who opened the carousel but did not message.'},
+ 3:{good:['Fast-growing segment with few competitors advertising to men','Clear audience: men 28–45 with business and fitness interests'],bad:[],fix:'Scale steadily. Add an Arabic version for GCC men.'},
+ 4:{good:['Very cheap leads (low cost per lead looks good on paper)'],bad:['"AED 99" attracts price shoppers who never book a AED 4,800 implant','Advantage+ audience expanded across the whole UAE: 58% of leads live outside Dubai','Only 27% of leads match the target patient','Lead form has no qualifying question, so anyone can submit in one tap'],fix:'Pause it. Relaunch with no price in the hook, Dubai 20 km only, and a form question: "When are you planning treatment?"'},
+ 5:{good:['Strong video, people watch to the end'],bad:['Broad 18–45 targeting: 44% of leads are under 25 and cannot afford AED 14,000','Many viewers comment for entertainment, not treatment'],fix:'Move to 28–45, add instalment-plan message, send traffic to WhatsApp with a doctor consultation offer.'},
+ 6:{good:['Low cost per lead','Good for awareness among young professionals'],bad:['18–34 audience brings low-value, one-off visits','Weekend message attracts tourists who do not come back'],fix:'Shift to 28–45 residents, bundle IV with a skin treatment to lift the basket.'},
+ 7:{good:['Very high booking rate','Arabic creative reaches the right community'],bad:['Low price: lots of work for small revenue'],fix:'Keep it small. Use it as a first visit and offer a facial or IV on the same day.'},
+ 8:{good:['Good entry service: cheap first visit brings new patients in'],bad:['Revenue per patient is low unless they come back for veneers or whitening'],fix:'Train the team to book a free smile check during the cleaning visit.'},
+ 9:{good:['Doctor explaining builds trust for surgery'],bad:['English video while 61% of the people it reaches are Arabic speakers','Very low click rate (0.9%): the first seconds do not stop the scroll'],fix:'Re-shoot in Arabic with the result shown in the first 3 seconds.'},
+ 10:{good:['Real patient content performs better than studio ads','Clear target: women 22–40 in Dubai'],bad:[],fix:'Ask more happy patients for short videos. Use them in the next round.'},
+ 11:{good:['Smile reveal grabs attention'],bad:['UAE-wide targeting: 46% of leads are in Sharjah, Ajman or Abu Dhabi and rarely make the trip','Leads expect a single-tooth price, then drop at the real quote'],fix:'Limit to Dubai, show "from AED X per tooth" in the ad so leads arrive with the right expectation.'},
+ 12:{good:[],bad:['Audience Network placement took 41% of the budget: accidental clicks from games and apps','4.6% click rate looks great but 29% of phone numbers were invalid','"Limited offer" with no price attracts curiosity, not buyers','0 patients from AED 2,860'],fix:'Turn it off. If relaunched, use Instagram and Facebook feeds only and verify phone numbers in the form.'}
+};
+
+/* totals */
+var T={spend:0,leads:0,booked:0,patients:0,revenue:0};ADS.forEach(function(a){T.spend+=a.spend;T.leads+=a.leads;T.booked+=a.booked;T.patients+=a.patients;T.revenue+=a.revenue;});
+T.contacted=Math.round(T.leads*.82);T.walkin=Math.round(T.revenue*.18);T.totalRev=T.revenue+T.walkin;T.roas=T.revenue/T.spend;T.cpl=T.spend/T.leads;
+var PREV={totalRev:T.totalRev/1.17,leads:T.leads/1.09,booked:T.booked/1.04,cpl:T.cpl/0.94,roas:T.roas/1.12,show:0.73};
+T.show=T.patients/T.booked;
+
+/* daily trend */
+var DAYS=[];var end=new Date(2026,9,5);var base=T.totalRev/30;
+for(var i=29;i>=0;i--){var d=new Date(end);d.setDate(end.getDate()-i);var dow=d.getDay();var f=(dow==5?.7:dow==6?1.25:1)*(0.75+R()*.5)*(1+(29-i)/120);DAYS.push({d:d,v:base*f});}
+var sumD=DAYS.reduce(function(s,x){return s+x.v;},0);DAYS.forEach(function(x){x.v=x.v*T.totalRev/sumD;});
+document.getElementById('asof').textContent='Sample data · updated '+end.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+' 08:00';
+
+/* platforms */
+var PLAT={};ADS.forEach(function(a){var p=PLAT[a.p]||(PLAT[a.p]={spend:0,revenue:0,leads:0,patients:0});p.spend+=a.spend;p.revenue+=a.revenue;p.leads+=a.leads;p.patients+=a.patients;});
+
+/* ============ helpers ============ */
+function el(h){var t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstChild;}
+function delta(cur,prev,invert){var d=(cur-prev)/prev*100;var good=invert?d<0:d>0;var cls=Math.abs(d)<1?'flat':(good?'up':'down');return '<div class="d '+cls+'">'+(d>0?'↑ ':'↓ ')+Math.abs(d).toFixed(1)+'% vs prev</div>';}
+function kpi(l,v,sm,dl){return '<div class="kpi"><div class="l">'+l+'</div><div class="v">'+v+(sm?'<small>'+sm+'</small>':'')+'</div>'+(dl||'')+'</div>';}
+function bars(id,rows,max,opt){opt=opt||{};var h=rows.map(function(r){var w=Math.max(1.5,r.v/max*100);return '<div class="bar" title="'+r.n+': '+r.lab+'"><span class="name">'+r.n+'</span><div class="track"><div class="fill '+(r.cls||'')+'" style="width:'+w+'%"></div></div><span class="val">'+r.lab+'</span></div>';}).join('');document.getElementById(id).innerHTML=h;}
+function advice(id,items){document.getElementById(id).innerHTML=items.map(function(x){return '<li>'+x+'</li>';}).join('');}
+function issues(id,list){document.getElementById(id).innerHTML=list.map(function(x){return '<div class="issue'+(x.w?' w':'')+'"><b>'+x.t+'</b><p>'+x.p+'</p>'+(x.f?'<div class="fix">'+x.f+'</div>':'')+'</div>';}).join('');}
+var STL={win:'Winner',watch:'Fix',kill:'Stop'};
+function sortable(tableId,cols,rows,render,initial,onRow){
+  var state={k:initial[0],dir:initial[1]};var t=document.getElementById(tableId);
+  function draw(){rows.sort(function(a,b){var x=a[state.k],y=b[state.k];if(typeof x=='string')return state.dir*x.localeCompare(y);return state.dir*((x==null?-1:x)-(y==null?-1:y));});
+    t.innerHTML='<thead><tr>'+cols.map(function(c){return '<th class="'+(c.r?'r':'')+'" data-k="'+c.k+'" scope="col">'+c.l+(state.k==c.k?(state.dir<0?' ↓':' ↑'):'')+'</th>';}).join('')+'</tr></thead><tbody>'+rows.map(render).join('')+'</tbody>';
+    t.querySelectorAll('th').forEach(function(th){th.onclick=function(){var kk=th.dataset.k;state.dir=state.k==kk?-state.dir:-1;state.k=kk;draw();};});
+    if(onRow)t.querySelectorAll('tbody tr').forEach(function(tr){tr.onclick=function(){onRow(+tr.dataset.id);};});}
+  draw();return draw;}
+
+/* ============ OVERVIEW ============ */
+document.getElementById('kpis').innerHTML=
+ kpi('Revenue',k(T.totalRev),'AED',delta(T.totalRev,PREV.totalRev))+
+ kpi('Ad spend',k(T.spend),'AED','<div class="d flat">'+(T.spend/T.totalRev*100).toFixed(0)+'% of revenue</div>')+
+ kpi('Leads',fmt(T.leads),'',delta(T.leads,PREV.leads))+
+ kpi('Cost per lead',T.cpl.toFixed(0),'AED',delta(T.cpl,PREV.cpl,true))+
+ kpi('Bookings',fmt(T.booked),'',delta(T.booked,PREV.booked))+
+ kpi('Return on ads',T.roas.toFixed(1),'×',delta(T.roas,PREV.roas));
+
+(function trend(){var W=760,H=260,pl=46,pr=10,pt=12,pb=28;var max=Math.ceil(Math.max.apply(null,DAYS.map(function(d){return d.v;}))/2000)*2000;
+ var x=function(i){return pl+i*(W-pl-pr)/(DAYS.length-1);},y=function(v){return pt+(1-v/max)*(H-pt-pb);};
+ var g='';for(var s=0;s<=4;s++){var v=max*s/4;g+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="#26231d"/><text x="'+(pl-8)+'" y="'+(y(v)+4)+'" text-anchor="end" fill="#6f6a60" font-size="11" font-family="JetBrains Mono">'+k(v)+'</text>';}
+ var pts=DAYS.map(function(d,i){return x(i)+','+y(d.v);}).join(' ');
+ var area='M'+x(0)+','+y(0)+' L'+pts.replace(/ /g,' L')+' L'+x(DAYS.length-1)+','+y(0)+'Z';
+ var lab='';[0,7,14,21,29].forEach(function(i){lab+='<text x="'+x(i)+'" y="'+(H-8)+'" text-anchor="middle" fill="#6f6a60" font-size="11" font-family="JetBrains Mono">'+DAYS[i].d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+'</text>';});
+ var last=DAYS[DAYS.length-1];
+ var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Daily revenue over the last 30 days"><defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9b45a" stop-opacity=".28"/><stop offset="1" stop-color="#e9b45a" stop-opacity="0"/></linearGradient></defs>'+g+'<path d="'+area+'" fill="url(#ga)"/><polyline points="'+pts+'" fill="none" stroke="#e9b45a" stroke-width="2" stroke-linejoin="round"/><circle cx="'+x(29)+'" cy="'+y(last.v)+'" r="4.5" fill="#fbc668" stroke="#070707" stroke-width="2"/>'+lab+'<line id="xh" y1="'+pt+'" y2="'+y(0)+'" stroke="#a69f92" stroke-dasharray="3 3" opacity="0"/><circle id="xd" r="5" fill="#fbc668" stroke="#070707" stroke-width="2" opacity="0"/><rect id="hit" x="'+pl+'" y="0" width="'+(W-pl-pr)+'" height="'+H+'" fill="transparent"/></svg>';
+ var box=document.getElementById('trend');box.innerHTML=svg;var tt=document.getElementById('tt');var sv=box.querySelector('svg');
+ sv.querySelector('#hit').addEventListener('pointermove',function(e){var r=sv.getBoundingClientRect();var px=(e.clientX-r.left)/r.width*W;var i=Math.max(0,Math.min(29,Math.round((px-pl)/((W-pl-pr)/29))));var d=DAYS[i];
+   var xh=sv.querySelector('#xh'),xd=sv.querySelector('#xd');xh.setAttribute('x1',x(i));xh.setAttribute('x2',x(i));xh.setAttribute('opacity',1);xd.setAttribute('cx',x(i));xd.setAttribute('cy',y(d.v));xd.setAttribute('opacity',1);
+   tt.innerHTML=d.d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})+'<br><b>'+aed(d.v)+'</b>';tt.style.opacity=1;tt.style.left=(e.clientX+14)+'px';tt.style.top=(e.clientY+window.scrollY-40)+'px';});
+ sv.querySelector('#hit').addEventListener('pointerleave',function(){tt.style.opacity=0;sv.querySelector('#xh').setAttribute('opacity',0);sv.querySelector('#xd').setAttribute('opacity',0);});
+})();
+
+(function funnel(){var st=[['Leads',T.leads],['Contacted',T.contacted],['Booked',T.booked],['Came in & paid',T.patients]];
+ document.getElementById('funnel').innerHTML=st.map(function(s,i){var w=s[1]/T.leads*100;var rt=i==0?'100%':(s[1]/st[i-1][1]*100).toFixed(0)+'% of prev';return '<div class="fstep"><span class="lab">'+s[0]+'</span><div><div class="blk" style="width:'+Math.max(w,8)+'%">'+fmt(s[1])+'</div></div><span class="rt">'+rt+'</span></div>';}).join('')+
+ '<p class="sub" style="margin-top:6px;font-size:13px">Biggest drop: <b style="color:var(--fg)">'+(100-T.booked/T.contacted*100).toFixed(0)+'% of contacted leads never book.</b> Most of them came from 3 ads (see Ads performance).</p>';})();
+
+(function plat(){var names=['Instagram','Facebook','TikTok','Snapchat'];var max=Math.max.apply(null,names.map(function(n){return Math.max(PLAT[n].revenue,PLAT[n].spend);}));
+ var h=names.map(function(n){var p=PLAT[n];return '<div style="display:grid;gap:4px"><div style="display:flex;justify-content:space-between;font-size:13.5px"><b>'+n+'</b><span class="num" style="color:var(--muted)">ROAS '+(p.revenue/p.spend).toFixed(1)+'× · '+p.patients+' patients</span></div>'+
+  '<div class="bar" style="grid-template-columns:70px minmax(0,1fr) 84px"><span class="name">Spend</span><div class="track"><div class="fill grey" style="width:'+(p.spend/max*100)+'%"></div></div><span class="val">'+k(p.spend)+'</span></div>'+
+  '<div class="bar" style="grid-template-columns:70px minmax(0,1fr) 84px"><span class="name">Revenue</span><div class="track"><div class="fill" style="width:'+(p.revenue/max*100)+'%"></div></div><span class="val">'+k(p.revenue)+'</span></div></div>';}).join('');
+ document.getElementById('platBars').innerHTML=h;})();
+
+document.getElementById('alerts').innerHTML=[
+ ['r','!','2 ads lost AED 11,460 this month','Dental implant "AED 99" and Lip filler offer brought almost no paying patients.'],
+ ['r','!','47 leads waited more than 24 hours','Most of them in Team B. Leads answered after a day rarely book.'],
+ ['o','~','Eyelid surgery ad speaks English to an Arabic-speaking audience','61% of the people it reaches are Arabic speakers. Click rate is 0.9%.'],
+ ['o','~','Dr. Sara (dental) is 94% booked, Dr. Huda is at 48%','Move new veneer consultations to Dr. Huda to cut waiting time.'],
+ ['g','✓','Instagram Botox reel is the best ad this month','ROAS '+ADS[0].roas.toFixed(1)+'× from AED '+fmt(ADS[0].spend)+'. Ready to scale.']
+].map(function(a){return '<div class="alert '+a[0]+'"><div class="ic">'+a[1]+'</div><div><b>'+a[2]+'</b><span>'+a[3]+'</span></div></div>';}).join('');
+
+advice('advOverview',[
+ '<b>Stop 2 losing ads</b> (implant "AED 99" and lip filler offer) and move their AED 11,460 to the Instagram Botox reel and the 6D veneers carousel.',
+ '<b>Answer every lead within 5 minutes.</b> 47 leads waited over a day last month. A shared WhatsApp queue with an alert at 15 minutes fixes this.',
+ '<b>Limit all ads to Dubai.</b> UAE-wide targeting sent 1 in 3 leads from cities that rarely make the trip.',
+ '<b>Re-shoot the eyelid surgery video in Arabic.</b> The audience is mostly Arabic-speaking and the ad is in English.',
+ '<b>Send a reminder 24 hours and 2 hours before each appointment.</b> No-shows cost about '+aed((T.booked-T.patients)*1100)+' this month.'
+]);
+
+/* ============ ADS ============ */
+var winners=ADS.filter(function(a){return a.status=='win';}),losers=ADS.filter(function(a){return a.status=='kill';});
+var wasted=losers.reduce(function(s,a){return s+a.spend;},0);
+document.getElementById('adKpis').innerHTML=
+ kpi('Ad spend',k(T.spend),'AED')+kpi('Revenue from ads',k(T.revenue),'AED')+kpi('Return on ads',T.roas.toFixed(1),'×')+
+ kpi('Winners',winners.length,' ads','<div class="d up">'+(winners.reduce(function(s,a){return s+a.revenue;},0)/T.revenue*100).toFixed(0)+'% of ad revenue</div>')+
+ kpi('Need fixing',ADS.filter(function(a){return a.status=='watch';}).length,' ads')+
+ kpi('Wasted spend',k(wasted),'AED','<div class="d down">'+losers.length+' ads to stop</div>');
+var selAd=4;
+function drawDrill(id){selAd=id;var a=ADS.filter(function(x){return x.id==id;})[0],w=WHY[id];
+ document.getElementById('drill').innerHTML='<div class="card-h"><h2>'+a.p+' · '+a.name+'</h2><span class="st '+a.status+'">'+STL[a.status]+'</span></div><div class="drill"><div><dl class="dl">'+
+ '<dt>Service</dt><dd>'+a.svcN+'</dd><dt>Creative</dt><dd>'+a.fmt+'</dd><dt>Targeting</dt><dd>'+a.aud+'</dd>'+
+ '<dt>Spend</dt><dd class="num">'+aed(a.spend)+'</dd><dt>Reach</dt><dd class="num">'+fmt(a.impr)+' impressions · '+a.ctr+'% click rate</dd>'+
+ '<dt>Leads</dt><dd class="num">'+a.leads+' · AED '+a.cpl.toFixed(0)+' per lead</dd><dt>Patients</dt><dd class="num">'+a.booked+' booked → '+a.patients+' paid</dd>'+
+ '<dt>Revenue</dt><dd class="num"><b>'+aed(a.revenue)+'</b> · ROAS '+a.roas.toFixed(1)+'×</dd><dt>On target</dt><dd class="num">'+(a.on*100).toFixed(0)+'% of leads match the target patient</dd></dl></div>'+
+ '<div style="display:grid;gap:12px;align-content:start">'+
+ (w.good.length?'<div><b style="color:var(--good)">What works</b><ul style="margin:6px 0 0;padding-left:18px;color:#d8d1c3">'+w.good.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>':'')+
+ (w.bad.length?'<div><b style="color:var(--bad)">What goes wrong</b><ul style="margin:6px 0 0;padding-left:18px;color:#d8d1c3">'+w.bad.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>':'')+
+ '<div class="issue w" style="border-left-color:var(--gold)"><b style="color:var(--gold-hi)">Recommendation</b><p style="color:#d8d1c3">'+w.fix+'</p></div></div></div>';
+ document.querySelectorAll('#adTable tbody tr').forEach(function(tr){tr.classList.toggle('sel',+tr.dataset.id==id);});}
+var maxRev=Math.max.apply(null,ADS.map(function(a){return a.revenue;}));
+var redrawAds=sortable('adTable',[{k:'name',l:'Ad'},{k:'p',l:'Platform'},{k:'spend',l:'Spend',r:1},{k:'leads',l:'Leads',r:1},{k:'cpl',l:'Cost / lead',r:1},{k:'patients',l:'Patients',r:1},{k:'revenue',l:'Revenue',r:1},{k:'roas',l:'ROAS',r:1},{k:'on',l:'On target',r:1},{k:'status',l:'Verdict'}],ADS.slice(),
+ function(a){return '<tr class="click" data-id="'+a.id+'"><td><b>'+a.name+'</b><span class="s">'+a.fmt+' · '+a.aud+'</span></td><td><span class="pill">'+a.p+'</span></td><td class="r num">'+fmt(a.spend)+'</td><td class="r num">'+a.leads+'</td><td class="r num">'+a.cpl.toFixed(0)+'</td><td class="r num">'+a.patients+'</td><td class="r num cellbar"><i style="width:'+(a.revenue/maxRev*100)+'%"></i><span>'+fmt(a.revenue)+'</span></td><td class="r num"><b style="color:'+(a.roas>=3?'var(--good)':a.roas>=1.5?'var(--fg)':'var(--bad)')+'">'+a.roas.toFixed(1)+'×</b></td><td class="r num">'+(a.on*100).toFixed(0)+'%</td><td><span class="st '+a.status+'">'+STL[a.status]+'</span></td></tr>';},
+ ['roas',-1],function(id){drawDrill(id);document.getElementById('drill').scrollIntoView({behavior:'smooth',block:'nearest'});});
+drawDrill(4);
+issues('adIssues',[
+ {t:'Cheap price hooks bring the wrong buyers',p:'"AED 99 consultation" brought 512 leads but only '+ADS[3].patients+' implant patients. People who click for AED 99 rarely pay AED 4,800.',f:'Sell the result and the doctor, not the discount. Show "instalments available" instead of a price.'},
+ {t:'Audience Network wastes budget',p:'41% of the lip filler budget went to banners inside games and apps. High clicks, invalid phone numbers, zero patients.',f:'Use Facebook and Instagram feeds, stories and reels only.'},
+ {t:'Language does not match the audience',p:'The eyelid surgery video is in English, while 61% of the people reached are Arabic speakers.',f:'Run separate Arabic and English versions with language targeting.'},
+ {t:'Targeting too wide',p:'Advantage+ and UAE-wide settings on 3 ads sent leads from Sharjah, Ajman and Abu Dhabi who rarely travel for treatment.',f:'Dubai 15–20 km around the clinic. Expand only for surgery and veneers.',w:1},
+ {t:'Lead forms with no filter',p:'One-tap forms let anyone submit. 18% of all leads could not be reached at all.',f:'Add one question ("When do you plan treatment?") and switch to higher-intent forms.',w:1}
+]);
+advice('advAds',[
+ '<b>Move AED 11,460</b> from the 2 stopped ads to the Botox reel (+30%) and 6D veneers carousel (+40%). Expected: about '+aed(11460*4.5)+' more revenue at current ROAS.',
+ '<b>Judge ads by patients, not leads.</b> The cheapest leads (AED 17) came from the worst ad. Every ad here is ranked by money that reached reception.',
+ '<b>Retarget warm people.</b> Run a small ad to people who watched 50% of a video or messaged without booking. They are 3–5× cheaper to convert.',
+ '<b>Test one change at a time</b>: new first 3 seconds, Arabic vs English, real patient vs studio. Keep the winner, drop the rest every Sunday.',
+ '<b>Refresh creatives every 2–3 weeks.</b> When the same people see an ad too often, cost per lead climbs.'
+]);
+
+/* ============ AUDIENCE ============ */
+var NAT=[{n:'GCC nationals',v:21,t:1},{n:'Arab expats',v:24,t:1},{n:'Western expats',v:11,t:1},{n:'South Asian expats',v:22,t:0},{n:'Southeast Asian expats',v:14,t:0},{n:'Other / unknown',v:8,t:0}];
+bars('natBars',NAT.map(function(r){return {n:r.n,v:r.v,lab:r.v+'%',cls:r.t?'':'grey'};}),30);
+var AGE=[{n:'18–24',v:27,t:0},{n:'25–34',v:34,t:1},{n:'35–45',v:26,t:1},{n:'46+',v:13,t:0}];
+bars('ageBars',AGE.map(function(r){return {n:r.n,v:r.v,lab:r.v+'%',cls:r.t?'':'grey'};}),40);
+bars('cityBars',[{n:'Dubai',v:64,lab:'64%'},{n:'Sharjah',v:17,lab:'17%',cls:'grey'},{n:'Abu Dhabi',v:9,lab:'9%',cls:'grey'},{n:'Ajman',v:7,lab:'7%',cls:'grey'},{n:'Other emirates',v:3,lab:'3%',cls:'grey'}],70);
+bars('onTarget',ADS.slice().sort(function(a,b){return b.on-a.on;}).map(function(a){return {n:a.svcN+' · '+a.p,v:a.on*100,lab:(a.on*100).toFixed(0)+'%',cls:a.on<.5?'bad':''};}),100);
+document.querySelector('#natBars').insertAdjacentHTML('afterend','<p class="sub" style="font-size:13px;margin-top:12px">Only <b style="color:var(--fg)">56%</b> of leads match the target patient. The rest cost money but book 4× less often.</p>');
+issues('audIssues',[
+ {t:'Advantage+ audience left on',p:'Meta expands the audience automatically to whoever clicks cheapest. On the implant ad this pulled 73% of leads from outside the target.',f:'Use your own audience settings for treatment ads. Keep Advantage+ only for awareness.'},
+ {t:'English creative, Arabic target',p:'Ads aimed at GCC and Arab clients run in English, so they mostly convert people outside the target.',f:'Arabic version for Arab audiences, English version with language targeting for Western expats.'},
+ {t:'Low prices in the hook',p:'"AED 99" and "AED 199" attract bargain hunters from every community, not the premium patient the clinic wants.',f:'Lead with results, doctors and premium experience. Mention price only in the conversation.'},
+ {t:'Age range too wide',p:'27% of leads are 18–24. They are curious but rarely buy surgery or veneers.',f:'Start at 25 for aesthetics and 28 for surgery and veneers.',w:1},
+ {t:'Location set to all of UAE',p:'36% of leads live outside Dubai and most never come in.',f:'Dubai radius around the clinic. A separate small campaign for other emirates only for high-ticket services.',w:1}
+]);
+advice('advAud',[
+ '<b>Build one audience per patient type</b>: Arab women 25–45, Western expats 28–50, men 28–45. Different creative and language for each.',
+ '<b>Feed real patients back to Meta.</b> Upload the list of people who paid (numbers only, hashed) and build lookalike audiences. Meta then finds more people like your real patients.',
+ '<b>Ask every lead 2 questions</b> in the form or on WhatsApp: where they live and when they plan treatment. Off-target leads go to a lighter follow-up.',
+ '<b>Review the profile chart every Sunday.</b> If the on-target share drops under 60%, the agent flags the ad that caused it.'
+]);
+
+/* ============ SALES ============ */
+var FIRST=['Rana','Omar','Aya','Khaled','Nour','Yousef','Mariam','Hassan','Salma','Ahmed','Lina','Tarek','Hala','Fadi','Dina','Karim','Reem','Ziad','Mona','Sami','Huda','Adel'];
+var AGENTS=[];for(var i=0;i<20;i++){var team=i<10?'A':'B';var skill=team=='A'?.9+R()*.4:.7+R()*.45;var leads=Math.round(T.leads/20*(.75+R()*.5));var resp=Math.round((team=='A'?6:14)+R()*(team=='A'?14:40)/skill);var conv=Math.min(.42,(.30-resp/400)*skill+R()*.04);var booked=Math.round(leads*conv);var show=.68+R()*.2;var paid=Math.round(booked*show);
+  AGENTS.push({id:i,name:FIRST[i+2]+' '+String.fromCharCode(65+((i*7)%26))+'.',team:team,leads:leads,resp:resp,contact:Math.round(70+R()*28),conv:conv*100,booked:booked,paid:paid,rev:paid*(1500+R()*2600),follow:Math.round(1+R()*4*skill),stale:Math.round(resp>30?R()*9+2:R()*3)});}
+(function(){var sl=0,sb=0,sp=0,sr=0,ss=0;AGENTS.forEach(function(a){sl+=a.leads;sb+=a.booked;sp+=a.paid;sr+=a.rev;ss+=a.stale;});
+ var fb=T.booked/sb,fp=T.patients/sp,fr=T.revenue/sr,fs=47/ss;
+ AGENTS.forEach(function(a){a.booked=Math.round(a.booked*fb);a.conv=a.booked/a.leads*100;a.paid=Math.min(a.booked,Math.round(a.paid*fp));a.rev=a.rev*fr;a.stale=Math.round(a.stale*fs);});})();
+function teamAgg(t){var a=AGENTS.filter(function(x){return t=='all'||x.team==t;});var s={leads:0,booked:0,paid:0,rev:0,stale:0,resp:0};a.forEach(function(x){s.leads+=x.leads;s.booked+=x.booked;s.paid+=x.paid;s.rev+=x.rev;s.stale+=x.stale;s.resp+=x.resp*x.leads;});s.resp/=s.leads;s.conv=s.booked/s.leads*100;s.n=a.length;return s;}
+function drawSales(){var t=document.getElementById('teamSel').value;var s=teamAgg(t);
+ document.getElementById('salesKpis').innerHTML=kpi('Leads handled',fmt(s.leads))+kpi('Avg first reply',s.resp.toFixed(0),' min','<div class="d '+(s.resp<=15?'up':'down')+'">target under 5 min</div>')+kpi('Booking rate',s.conv.toFixed(1),'%')+kpi('Patients paid',fmt(s.paid))+kpi('Revenue',k(s.rev),'AED')+kpi('Leads left > 24h',s.stale,'','<div class="d down">follow up today</div>');
+ var rows=AGENTS.filter(function(x){return t=='all'||x.team==t;});var maxR=Math.max.apply(null,rows.map(function(x){return x.rev;}));
+ sortable('agentTable',[{k:'name',l:'Agent'},{k:'team',l:'Team'},{k:'leads',l:'Leads',r:1},{k:'resp',l:'First reply',r:1},{k:'contact',l:'Reached',r:1},{k:'conv',l:'Booking rate',r:1},{k:'paid',l:'Patients',r:1},{k:'rev',l:'Revenue',r:1},{k:'stale',l:'Waiting > 24h',r:1}],rows,
+  function(a){return '<tr><td><b>'+a.name+'</b></td><td><span class="pill">Team '+a.team+'</span></td><td class="r num">'+a.leads+'</td><td class="r num" style="color:'+(a.resp<=10?'var(--good)':a.resp<=25?'var(--fg)':'var(--bad)')+'">'+a.resp+' min</td><td class="r num">'+a.contact+'%</td><td class="r num">'+a.conv.toFixed(1)+'%</td><td class="r num">'+a.paid+'</td><td class="r num cellbar"><i style="width:'+(a.rev/maxR*100)+'%"></i><span>'+fmt(a.rev)+'</span></td><td class="r num" style="color:'+(a.stale>5?'var(--bad)':'var(--fg)')+'">'+a.stale+'</td></tr>';},['rev',-1]);}
+document.getElementById('teamSel').onchange=drawSales;drawSales();
+(function(){var A=teamAgg('A'),B=teamAgg('B');var rows=[['Leads',fmt(A.leads),fmt(B.leads)],['Avg first reply',A.resp.toFixed(0)+' min',B.resp.toFixed(0)+' min'],['Booking rate',A.conv.toFixed(1)+'%',B.conv.toFixed(1)+'%'],['Patients paid',fmt(A.paid),fmt(B.paid)],['Revenue',aed(A.rev),aed(B.rev)],['Leads left > 24h',A.stale,B.stale]];
+ document.getElementById('teamTable').innerHTML='<thead><tr><th>Metric</th><th class="r">Team A · Rana</th><th class="r">Team B · Omar</th></tr></thead><tbody>'+rows.map(function(r){return '<tr><td>'+r[0]+'</td><td class="r num">'+r[1]+'</td><td class="r num">'+r[2]+'</td></tr>';}).join('')+'</tbody>';})();
+bars('speedBars',[{n:'Under 5 min',v:38,lab:'38% book'},{n:'5–15 min',v:29,lab:'29% book'},{n:'15–60 min',v:19,lab:'19% book'},{n:'1–24 hours',v:11,lab:'11% book',cls:'grey'},{n:'Over 24 hours',v:4,lab:'4% book',cls:'bad'}],40);
+var slow=AGENTS.slice().sort(function(a,b){return b.resp-a.resp;}).slice(0,3),top=AGENTS.slice().sort(function(a,b){return b.conv-a.conv;})[0];
+issues('salesIssues',[
+ {t:slow.map(function(a){return a.name;}).join(', ')+' reply slowly',p:'Average first reply '+slow.map(function(a){return a.resp+' min';}).join(', ')+'. Their leads book about half as often as the team average.',f:'Daily check-in with the team leader. Auto-assign new leads away from agents with 5+ open chats.'},
+ {t:'Team B leaves too many leads overnight',p:teamAgg('B').stale+' leads waited more than 24 hours this month, versus '+teamAgg('A').stale+' in Team A.',f:'An evening shift of 2 agents, or an automatic WhatsApp reply that books a call slot.'},
+ {t:'Follow-ups stop after the first call',p:'Most agents make 1–2 attempts. Half of all bookings in this clinic happen on the 3rd contact or later.',f:'Follow-up plan: same day, day 2, day 5, day 10, with a template for each.',w:1},
+ {t:'Learn from '+top.name,p:'Highest booking rate in the clinic ('+top.conv.toFixed(1)+'%). Replies fast and always offers two appointment times.',f:'Record 3 of '+top.name.split(' ')[0]+'\'s calls and use them in training.',w:1}
+]);
+advice('advSales',[
+ '<b>5-minute rule:</b> every new lead gets a reply within 5 minutes during working hours. The system alerts the team leader at 15 minutes.',
+ '<b>Always offer two time slots</b> ("Tuesday 6pm or Wednesday 11am?") instead of asking "when are you free?".',
+ '<b>Script by service:</b> a short script for Botox, veneers and surgery, each with the 3 most common objections and answers.',
+ '<b>Reminders cut no-shows:</b> WhatsApp reminder 24 hours and 2 hours before, with the doctor\'s name and the clinic location.',
+ '<b>Weekly leaderboard</b> shared with both teams every Sunday, with a small reward for the best booking rate and fastest reply.'
+]);
+
+/* ============ SERVICES ============ */
+var SV={};Object.keys(SERVICES).forEach(function(kk){SV[kk]={k:kk,n:SERVICES[kk].n,dept:SERVICES[kk].dept,price:SERVICES[kk].price,patients:0,revenue:0,spend:0,leads:0,top:''};});
+ADS.forEach(function(a){var s=SV[a.svc];s.patients+=a.patients;s.revenue+=a.revenue;s.spend+=a.spend;s.leads+=a.leads;s.top=a.p;});
+Object.keys(SV).forEach(function(kk){var s=SV[kk];var walk=Math.round(s.patients*(.15+R()*.25));if(!s.patients)walk=Math.round(3+R()*8);s.patients+=walk;s.revenue=s.patients*s.price;s.cpl=s.leads?s.spend/s.leads:null;s.cpp=s.patients?s.spend/s.patients:null;s.trend=Math.round(-12+R()*34);if(!s.top)s.top='Walk-in';});
+var SVL=Object.keys(SV).map(function(kk){return SV[kk];});
+var maxS=Math.max.apply(null,SVL.map(function(s){return s.revenue;}));
+bars('svcBars',SVL.slice().sort(function(a,b){return b.revenue-a.revenue;}).map(function(s){return {n:s.n,v:s.revenue,lab:k(s.revenue)};}),maxS);
+var DEP={};SVL.forEach(function(s){DEP[s.dept]=(DEP[s.dept]||0)+s.revenue;});var dl=Object.keys(DEP).map(function(d){return {n:d,v:DEP[d],lab:k(DEP[d])};}).sort(function(a,b){return b.v-a.v;});
+bars('deptBars',dl,dl[0].v);
+sortable('svcTable',[{k:'n',l:'Service'},{k:'dept',l:'Department'},{k:'price',l:'Avg ticket',r:1},{k:'patients',l:'Patients',r:1},{k:'revenue',l:'Revenue',r:1},{k:'spend',l:'Ad spend',r:1},{k:'cpp',l:'Ad cost / patient',r:1},{k:'top',l:'Main source'},{k:'trend',l:'Trend',r:1}],SVL,
+ function(s){return '<tr><td><b>'+s.n+'</b></td><td><span class="pill">'+s.dept+'</span></td><td class="r num">'+fmt(s.price)+'</td><td class="r num">'+s.patients+'</td><td class="r num cellbar"><i style="width:'+(s.revenue/maxS*100)+'%"></i><span>'+fmt(s.revenue)+'</span></td><td class="r num">'+(s.spend?fmt(s.spend):'—')+'</td><td class="r num">'+(s.cpp?fmt(s.cpp):'—')+'</td><td>'+s.top+'</td><td class="r num '+(s.trend>=0?'up':'down')+'">'+(s.trend>=0?'↑ ':'↓ ')+Math.abs(s.trend)+'%</td></tr>';},['revenue',-1]);
+advice('advSvc',[
+ '<b>Veneers are the money engine.</b> Few patients, the biggest revenue. Give them the most budget and the best sales agents.',
+ '<b>Use cheap services as a door.</b> Teeth cleaning, hijama and facials bring first visits. Book a free smile or skin check on the same day to sell the next treatment.',
+ '<b>Bundle IV drip with skin treatments</b> instead of selling it alone to a young weekend audience.',
+ '<b>Men\'s Botox & filler is growing</b> with few competitors advertising to men. Add an Arabic version and a dedicated landing page.',
+ '<b>Surgery needs a longer journey:</b> free consultation, before/after gallery, instalment plan, and 3–4 follow-ups before the decision.'
+]);
+
+/* ============ DOCTORS ============ */
+var DOCS=[{n:'Dr. Sara M.',sp:'Cosmetic dentist',u:94},{n:'Dr. Huda R.',sp:'Cosmetic dentist',u:48},{n:'Dr. Adel K.',sp:'Implantologist',u:71},{n:'Dr. Lina S.',sp:'General dentist',u:83},{n:'Dr. Reem A.',sp:'Dermatologist',u:88},{n:'Dr. Fadi N.',sp:'Dermatologist',u:62},{n:'Dr. Mona Y.',sp:'Aesthetic physician',u:91},{n:'Dr. Ziad H.',sp:'Aesthetic physician',u:77},{n:'Dr. Tarek B.',sp:'Plastic surgeon',u:58},{n:'Dr. Dina F.',sp:'General physician (IV, hijama)',u:69}];
+DOCS.forEach(function(d,i){d.appts=Math.round(d.u*(d.sp.indexOf('surgeon')>-1?.6:2.1)+R()*20);d.rebook=Math.round(28+R()*40);d.rev=d.appts*(d.sp.indexOf('surgeon')>-1?9800:d.sp.indexOf('Cosmetic')>-1?3600:d.sp.indexOf('Implant')>-1?4100:d.sp.indexOf('General physician')>-1?420:1150)*(.8+R()*.4);d.noshow=Math.round(6+R()*14);});
+var dsum=DOCS.reduce(function(a,d){return a+d.rev;},0);DOCS.forEach(function(d){d.rev=d.rev*T.totalRev/dsum;});
+bars('docBars',DOCS.slice().sort(function(a,b){return b.u-a.u;}).map(function(d){return {n:d.n,v:d.u,lab:d.u+'%',cls:d.u<60?'grey':''};}),100);
+var maxD=Math.max.apply(null,DOCS.map(function(d){return d.rev;}));
+sortable('docTable',[{k:'n',l:'Doctor'},{k:'sp',l:'Specialty'},{k:'u',l:'Utilisation',r:1},{k:'appts',l:'Appointments',r:1},{k:'noshow',l:'No-shows',r:1},{k:'rebook',l:'Come back',r:1},{k:'rev',l:'Revenue',r:1}],DOCS,
+ function(d){return '<tr><td><b>'+d.n+'</b></td><td>'+d.sp+'</td><td class="r num" style="color:'+(d.u>=90?'var(--warn)':d.u<60?'var(--bad)':'var(--fg)')+'">'+d.u+'%</td><td class="r num">'+d.appts+'</td><td class="r num">'+d.noshow+'%</td><td class="r num">'+d.rebook+'%</td><td class="r num cellbar"><i style="width:'+(d.rev/maxD*100)+'%"></i><span>'+fmt(d.rev)+'</span></td></tr>';},['rev',-1]);
+advice('advDoc',[
+ '<b>Balance the dental chairs:</b> Dr. Sara is at 94% and Dr. Huda at 48%. Route new veneer consultations to Dr. Huda until both sit near 80%.',
+ '<b>Fill the plastic surgeon\'s free slots</b> with free surgery consultations from the liposuction and eyelid ads.',
+ '<b>Rebooking at checkout:</b> Botox every 4 months, cleaning every 6. Book the next visit before the patient leaves.',
+ '<b>Over-booked doctors (90%+) lose patients</b> to long waits. Add one evening slot or hand over simpler cases.'
+]);
+
+/* ============ TELEGRAM ============ */
+var y=DAYS[29],yp=DAYS[28];
+document.getElementById('tgDaily').textContent=
+'☀️ Good morning · Glow Up daily brief\n'+
+'Sun 5 Oct\n\n'+
+'💰 Revenue: '+aed(y.v)+' ('+((y.v-yp.v)/yp.v*100>=0?'↑':'↓')+Math.abs((y.v-yp.v)/yp.v*100).toFixed(0)+'% vs Saturday)\n'+
+'📥 Leads: 118 · booked 31 · showed 24\n'+
+'📣 Ad spend: AED 2,960 · ROAS 3.9×\n\n'+
+'🏆 Best ad: IG Botox reel · 9 patients\n'+
+'🚫 Worst ad: FB lip filler · AED 96 spent, 0 patients\n'+
+'🎯 On-target leads: 58% (target 70%)\n\n'+
+'👥 Sales: Team A replied in 9 min, Team B in 31 min\n'+
+'⏳ 12 leads still waiting from yesterday\n\n'+
+'✅ Today:\n'+
+'1) Pause the lip filler ad, move budget to the veneers carousel\n'+
+'2) Team B: call the 12 waiting leads before 12:00\n'+
+'3) Send reminders for 26 appointments tomorrow';
+})();
+
+/* tabs */
+document.querySelectorAll('nav.tabs button').forEach(function(b){b.addEventListener('click',function(){
+  document.querySelectorAll('nav.tabs button').forEach(function(x){x.setAttribute('aria-selected',x===b);});
+  document.querySelectorAll('.tab').forEach(function(s){s.hidden=s.id!==b.dataset.tab;});
+  history.replaceState(null,'','#'+b.dataset.tab);window.scrollTo({top:0});});});
+addEventListener('hashchange',function(){var b2=document.querySelector('nav.tabs button[data-tab="'+location.hash.slice(1)+'"]');if(b2)b2.click();});
+if(location.hash){var bt=document.querySelector('nav.tabs button[data-tab="'+location.hash.slice(1)+'"]');if(bt)bt.click();}
+</script>
+</body>
+</html>

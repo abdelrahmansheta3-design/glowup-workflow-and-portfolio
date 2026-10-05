@@ -1,0 +1,267 @@
+{
+ "name": "Glow Up · Daily Growth Brief (demo)",
+ "nodes": [
+  {
+   "parameters": {
+    "rule": {
+     "interval": [
+      {
+       "field": "cronExpression",
+       "expression": "0 8 * * *"
+      }
+     ]
+    }
+   },
+   "name": "Every day 8:00 AM",
+   "type": "n8n-nodes-base.scheduleTrigger",
+   "typeVersion": 1.2,
+   "position": [
+    0,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "jsCode": "// ===== Generate today's clinic data (DEMO) =====\n// Replace this node later with \"Read Excel from Google Drive / OneDrive\" and the ads connections.\nconst now = new Date();\nconst dubai = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Dubai' }));\nconst day = new Date(dubai); day.setDate(day.getDate() - 1);          // report on yesterday\nconst dateStr = day.toISOString().slice(0, 10);\nlet seed = Number(dateStr.replace(/-/g, ''));\nconst rnd = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };\nconst pick = a => a[Math.floor(rnd() * a.length)];\nconst weekend = [5, 6].includes(day.getDay()) ? 1.2 : 1;\n\nconst SERVICES = { 'Botox': 1200, 'Fillers': 1500, \"Men's Botox & filler\": 1450, 'IV drip': 650, 'Facial': 450, 'Chemical peel': 750, 'Hijama': 250,\n  'Teeth cleaning': 350, 'Dental implant': 4800, '3D veneers': 9500, '6D veneers': 18000, 'Liposuction': 14000, 'Eyelid surgery': 9500 };\nconst ADS = [\n  ['Instagram', 'Botox reel (Arabic)', 'Botox', 410, 13, .22, .81, .86],\n  ['Instagram', '6D veneers carousel', '6D veneers', 330, 2, .10, .84, .82],\n  ['Instagram', \"Men's Botox reel\", \"Men's Botox & filler\", 210, 5, .20, .80, .79],\n  ['Facebook', 'Implant \"AED 99\" lead form', 'Dental implant', 290, 17, .012, .35, .27],\n  ['TikTok', 'Liposuction transformation', 'Liposuction', 310, 10, .015, .50, .38],\n  ['Snapchat', 'IV drip weekend story', 'IV drip', 175, 8, .14, .71, .41],\n  ['Facebook', 'Hijama (Arabic)', 'Hijama', 95, 7, .34, .83, .88],\n  ['TikTok', 'Teeth cleaning AED 199', 'Teeth cleaning', 185, 10, .27, .74, .69],\n  ['Facebook', 'Eyelid surgery (English)', 'Eyelid surgery', 240, 3, .04, .78, .43],\n  ['Instagram', 'Peel & facial UGC', 'Chemical peel', 135, 6, .20, .79, .84],\n  ['Snapchat', '3D veneers smile reveal', '3D veneers', 215, 7, .03, .55, .52],\n  ['Facebook', 'Lip filler \"limited offer\"', 'Fillers', 95, 5, .03, 0, .31]\n];\nconst AGENTS = ['Hassan J.','Fadi Z.','Khaled H.','Salma Q.','Nour O.','Aya A.','Ziad B.','Reem U.','Karim N.','Mona I.','Lina E.','Ahmed X.','Tarek L.','Sami P.','Yousef V.','Mariam C.','Hala S.','Huda W.','Dina G.','Adel D.'];\nconst DOCTORS = ['Dr. Sara M.','Dr. Huda R.','Dr. Adel K.','Dr. Lina S.','Dr. Reem A.','Dr. Fadi N.','Dr. Mona Y.','Dr. Ziad H.','Dr. Tarek B.','Dr. Dina F.'];\nconst NAT = [['GCC', 1], ['Arab expat', 1], ['Western expat', 1], ['South Asian expat', 0], ['Southeast Asian expat', 0], ['Other', 0]];\n\nconst adRows = [], leads = [], appointments = [], payments = [];\nlet leadId = 1;\nfor (const [platform, ad, service, spendBase, leadsBase0, book, show, onTarget] of ADS) {\n  const leadsBase = leadsBase0 * 1.3;\n  // hourly ad stats (like an Ads Manager export)\n  let adLeads = Math.round(leadsBase * weekend * (0.7 + rnd() * 0.6));\n  for (let h = 0; h < 24; h++) {\n    const w = h < 8 ? 0.2 : h > 21 ? 0.6 : 1.2;\n    adRows.push({ date: dateStr, hour: h, platform, ad, service, spend: +(spendBase / 24 * w * (0.7 + rnd() * 0.6)).toFixed(2), impressions: Math.round(400 * w * (0.6 + rnd())), clicks: Math.round(9 * w * (0.5 + rnd())) });\n  }\n  for (let i = 0; i < adLeads; i++) {\n    const team = rnd() < 0.5 ? 'A' : 'B';\n    const agent = team === 'A' ? pick(AGENTS.slice(0, 10)) : pick(AGENTS.slice(10));\n    const reply = Math.round((team === 'A' ? 4 : 10) + rnd() * (team === 'A' ? 20 : 70));\n    const target = rnd() < onTarget;\n    const nat = target ? pick(NAT.filter(n => n[1]))[0] : pick(NAT.filter(n => !n[1]))[0];\n    const booked = rnd() < book * (reply < 15 ? 1.4 : 0.7);\n    const lead = { lead_id: 'L' + dateStr.replace(/-/g, '') + String(leadId++).padStart(4, '0'), source: 'Ads', platform, ad, service, team, agent, first_reply_min: reply, nationality_group: nat, city: rnd() < 0.66 ? 'Dubai' : pick(['Sharjah', 'Abu Dhabi', 'Ajman']), booked };\n    leads.push(lead);\n    if (booked) {\n      const showed = rnd() < show;\n      appointments.push({ lead_id: lead.lead_id, service, doctor: pick(DOCTORS), status: showed ? 'Attended' : 'No-show' });\n      if (showed) payments.push({ lead_id: lead.lead_id, service, amount: SERVICES[service], source: 'Ads', agent });\n    }\n  }\n}\n// sales outreach + organic patients (no ad cost)\nfor (const [src, n] of [['Sales outreach', Math.round(6 + rnd() * 6)], ['Organic', Math.round(9 + rnd() * 8)]]) {\n  for (let i = 0; i < n; i++) {\n    const service = pick(Object.keys(SERVICES).filter(s => SERVICES[s] < 5000 || rnd() < 0.15));\n    payments.push({ lead_id: null, service, amount: SERVICES[service], source: src, agent: src === 'Sales outreach' ? pick(AGENTS) : null, channel: src === 'Organic' ? pick(['Google Maps', 'Walk-in', 'Referral', 'Instagram (no ad)']) : 'Call list' });\n  }\n}\nconst reviews = Array.from({ length: Math.round(1 + rnd() * 4) }, () => ({ stars: pick([5, 5, 5, 5, 4, 4, 3, 1]), doctor: pick(DOCTORS), replied: rnd() < 0.7 }));\nconst reports = { expected: 40, received: Math.round(33 + rnd() * 6), blockers: Math.round(1 + rnd() * 4) };\n\nreturn [{ json: { date: dateStr, rows: adRows.length + leads.length + appointments.length + payments.length, adRows, leads, appointments, payments, reviews, reports } }];\n"
+   },
+   "name": "Generate clinic data (demo)",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    240,
+    0
+   ],
+   "notes": "Replace later with: Read Excel from Google Drive / OneDrive + Meta, Google, TikTok, Snapchat ads connections."
+  },
+  {
+   "parameters": {
+    "jsCode": "// ===== Compute KPIs (plain code, no AI) =====\nconst d = $input.first().json;\nconst sum = (a, f) => a.reduce((s, x) => s + f(x), 0);\nconst group = (a, k) => a.reduce((m, x) => ((m[x[k]] = m[x[k]] || []).push(x), m), {});\n\nconst spend = sum(d.adRows, r => r.spend);\nconst revenue = sum(d.payments, p => p.amount);\nconst bySource = Object.fromEntries(Object.entries(group(d.payments, 'source')).map(([s, a]) => [s, { patients: a.length, revenue: sum(a, p => p.amount) }]));\nconst adsRev = (bySource.Ads || { revenue: 0 }).revenue;\n\nconst ads = Object.entries(group(d.adRows, 'ad')).map(([ad, rows]) => {\n  const L = d.leads.filter(l => l.ad === ad);\n  const P = d.payments.filter(p => p.source === 'Ads' && L.some(l => l.lead_id === p.lead_id));\n  const sp = sum(rows, r => r.spend), rv = sum(P, p => p.amount);\n  return { ad, platform: rows[0].platform, spend: Math.round(sp), leads: L.length, patients: P.length, revenue: rv, roas: sp ? +(rv / sp).toFixed(1) : 0,\n           onTarget: L.length ? Math.round(100 * L.filter(l => ['GCC', 'Arab expat', 'Western expat'].includes(l.nationality_group)).length / L.length) : 0 };\n}).sort((a, b) => b.roas - a.roas);\n\nconst teams = Object.entries(group(d.leads, 'team')).map(([t, L]) => ({ team: t, leads: L.length, booked: L.filter(l => l.booked).length,\n  avgReply: Math.round(sum(L, l => l.first_reply_min) / L.length), slow: L.filter(l => l.first_reply_min > 30).length })).sort((a, b) => a.team.localeCompare(b.team));\nconst agents = Object.entries(group(d.leads, 'agent')).map(([a, L]) => ({ agent: a, leads: L.length, booked: L.filter(l => l.booked).length, avgReply: Math.round(sum(L, l => l.first_reply_min) / L.length) }));\nconst slowest = agents.slice().sort((a, b) => b.avgReply - a.avgReply).slice(0, 3);\nconst best = agents.slice().sort((a, b) => b.booked - a.booked)[0];\n\nconst noShow = d.appointments.filter(a => a.status === 'No-show').length;\nconst onTarget = Math.round(100 * d.leads.filter(l => ['GCC', 'Arab expat', 'Western expat'].includes(l.nationality_group)).length / d.leads.length);\nconst outsideDubai = Math.round(100 * d.leads.filter(l => l.city !== 'Dubai').length / d.leads.length);\nconst badReviews = d.reviews.filter(r => r.stars <= 2 && !r.replied).length;\n\nconst kpis = {\n  date: d.date, rowsProcessed: d.rows,\n  revenue, adSpend: Math.round(spend), adsRevenue: adsRev, adsProfit: Math.round(adsRev - spend), roas: +(adsRev / spend).toFixed(1),\n  bySource, leads: d.leads.length, booked: d.appointments.length, attended: d.appointments.length - noShow, noShow,\n  onTargetPct: onTarget, outsideDubaiPct: outsideDubai,\n  bestAd: ads[0], worstAd: ads[ads.length - 1], zeroPatientAds: ads.filter(a => a.patients === 0 && a.spend > 50).map(a => `${a.platform} · ${a.ad} (AED ${a.spend})`),\n  teams, slowestAgents: slowest, bestAgent: best,\n  reviews: { new: d.reviews.length, avg: d.reviews.length ? +(sum(d.reviews, r => r.stars) / d.reviews.length).toFixed(1) : null, badUnanswered: badReviews },\n  teamReports: d.reports\n};\n// short text summary for the AI (a few lines instead of thousands of rows)\nconst f = n => Math.round(n).toLocaleString('en-US');\nconst summary = [\n  `Date: ${d.date} · rows processed: ${d.rows}`,\n  `Revenue AED ${f(revenue)} · Ads AED ${f(adsRev)} · Sales outreach AED ${f((bySource['Sales outreach']||{revenue:0}).revenue)} · Organic AED ${f((bySource.Organic||{revenue:0}).revenue)}`,\n  `Ad spend AED ${f(spend)} · ads profit AED ${f(adsRev - spend)} · ROAS ${kpis.roas}x`,\n  `Leads ${kpis.leads} · booked ${kpis.booked} · attended ${kpis.attended} · no-shows ${noShow}`,\n  `On-target leads ${onTarget}% (target 70%) · leads outside Dubai ${outsideDubai}%`,\n  `Best ad: ${ads[0].platform} ${ads[0].ad} · ${ads[0].patients} patients · ROAS ${ads[0].roas}x`,\n  `Worst ad: ${kpis.worstAd.platform} ${kpis.worstAd.ad} · AED ${kpis.worstAd.spend} spent · ${kpis.worstAd.patients} patients`,\n  `Ads with spend and zero patients: ${kpis.zeroPatientAds.join('; ') || 'none'}`,\n  ...teams.map(t => `Team ${t.team}: ${t.leads} leads, ${t.booked} booked, avg first reply ${t.avgReply} min, ${t.slow} leads waited >30 min`),\n  `Slowest agents: ${slowest.map(a => `${a.agent} ${a.avgReply} min`).join(', ')} · best: ${best.agent} ${best.booked} bookings`,\n  `Google: ${kpis.reviews.new} new reviews, avg ${kpis.reviews.avg}, ${badReviews} bad review(s) without reply`,\n  `Team reports: ${d.reports.received}/${d.reports.expected} received, ${d.reports.blockers} blockers`\n].join('\\n');\nconst system = `You are the AI analyst for Glow Up Clinic, a cosmetic, dental and wellness clinic in Dubai.\nYou receive yesterday's numbers, already calculated. Never invent numbers; use only what you receive.\nWrite the owner's morning brief for Telegram in clear, simple English:\n- Start with \"Good morning · Glow Up daily brief\" and the date.\n- Money: revenue, and split by ads / sales outreach / organic; ad spend, ads profit and ROAS.\n- Ads: best ad, worst ad, ads that spent money and brought no patients, on-target share.\n- Sales: both teams' reply time and bookings, slowest agents, best agent.\n- Google reviews and team reports in one line each.\n- End with \"Today:\" and exactly 3 numbered actions, each one specific (who does what).\nUse a few emojis as section markers. Max 1,500 characters. No markdown tables. Last line: \"Sample data (demo)\".`;\nconst body = { model: 'nousresearch/hermes-4-405b', temperature: 0.3, messages: [{ role: 'system', content: system }, { role: 'user', content: summary }] };\nreturn [{ json: { kpis, summary, body } }];\n"
+   },
+   "name": "Compute KPIs",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    480,
+    0
+   ],
+   "notes": "Plain code: turns hundreds of rows into a short summary. No AI here."
+  },
+  {
+   "parameters": {
+    "method": "POST",
+    "url": "https://openrouter.ai/api/v1/chat/completions",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify($json.body) }}",
+    "options": {
+     "timeout": 120000
+    }
+   },
+   "name": "AI brief writer (OpenRouter)",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    720,
+    0
+   ],
+   "retryOnFail": true,
+   "maxTries": 3,
+   "waitBetweenTries": 5000,
+   "onError": "continueRegularOutput"
+  },
+  {
+   "parameters": {
+    "jsCode": "const r = $input.first().json;\nconst text = (r.choices && r.choices[0] && r.choices[0].message && r.choices[0].message.content) || ('⚠️ Brief could not be written. Raw numbers:\\n' + $('Compute KPIs').first().json.summary);\nreturn [{ json: { telegram: text.slice(0, 3900) } }];"
+   },
+   "name": "Format brief",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    960,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "chatId": "PUT_YOUR_CHAT_ID_HERE",
+    "text": "={{ $json.telegram }}",
+    "additionalFields": {
+     "appendAttribution": false
+    }
+   },
+   "name": "Send to Telegram",
+   "type": "n8n-nodes-base.telegram",
+   "typeVersion": 1.2,
+   "position": [
+    1200,
+    0
+   ],
+   "retryOnFail": true,
+   "maxTries": 3
+  },
+  {
+   "parameters": {
+    "jsCode": "// ===== Live status for the dashboard network page =====\nconst k = $('Compute KPIs').first().json.kpis;\nconst status = { lastRun: new Date().toISOString(), reportDate: k.date, rowsProcessed: k.rowsProcessed,\n  agents: [\n    { id: 'ads', name: 'Ads Analyst', state: 'done', result: `${k.zeroPatientAds.length} ads flagged · ROAS ${k.roas}x` },\n    { id: 'sales', name: 'Sales Coach', state: 'done', result: k.teams.map(t => `Team ${t.team} ${t.avgReply} min`).join(' · ') },\n    { id: 'ops', name: 'Operations', state: 'done', result: `${k.attended} attended · ${k.noShow} no-shows` },\n    { id: 'reviews', name: 'Reviews Monitor', state: 'done', result: `${k.reviews.new} new reviews · avg ${k.reviews.avg}` },\n    { id: 'reports', name: 'Team Reports Reader', state: 'done', result: `${k.teamReports.received}/${k.teamReports.expected} reports` },\n    { id: 'brief', name: 'Brief Writer', state: 'done', result: 'Brief sent to Telegram 08:00' }\n  ],\n  totals: { revenue: k.revenue, leads: k.leads, booked: k.booked, adSpend: k.adSpend } };\nreturn [{ json: { message: `glowup status ${k.date}`, content: Buffer.from(JSON.stringify(status, null, 1), 'utf8').toString('base64') } }];"
+   },
+   "name": "Build live status",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1200,
+    220
+   ]
+  },
+  {
+   "parameters": {
+    "method": "GET",
+    "url": "https://api.github.com/repos/abdelrahmansheta3-design/restaurant-intelligence/contents/glowup/status.json",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Accept",
+       "value": "application/vnd.github+json"
+      },
+      {
+       "name": "User-Agent",
+       "value": "n8n-glowup"
+      }
+     ]
+    },
+    "options": {}
+   },
+   "name": "GitHub · get status SHA",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    1440,
+    220
+   ],
+   "onError": "continueRegularOutput"
+  },
+  {
+   "parameters": {
+    "method": "PUT",
+    "url": "https://api.github.com/repos/abdelrahmansheta3-design/restaurant-intelligence/contents/glowup/status.json",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Accept",
+       "value": "application/vnd.github+json"
+      },
+      {
+       "name": "User-Agent",
+       "value": "n8n-glowup"
+      }
+     ]
+    },
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify(Object.assign({ message: $('Build live status').first().json.message, content: $('Build live status').first().json.content }, $json.sha ? { sha: $json.sha } : {})) }}",
+    "options": {}
+   },
+   "name": "GitHub · update live status",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    1680,
+    220
+   ]
+  }
+ ],
+ "connections": {
+  "Every day 8:00 AM": {
+   "main": [
+    [
+     {
+      "node": "Generate clinic data (demo)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Generate clinic data (demo)": {
+   "main": [
+    [
+     {
+      "node": "Compute KPIs",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Compute KPIs": {
+   "main": [
+    [
+     {
+      "node": "AI brief writer (OpenRouter)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "AI brief writer (OpenRouter)": {
+   "main": [
+    [
+     {
+      "node": "Format brief",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Format brief": {
+   "main": [
+    [
+     {
+      "node": "Send to Telegram",
+      "type": "main",
+      "index": 0
+     },
+     {
+      "node": "Build live status",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Build live status": {
+   "main": [
+    [
+     {
+      "node": "GitHub · get status SHA",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "GitHub · get status SHA": {
+   "main": [
+    [
+     {
+      "node": "GitHub · update live status",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "settings": {
+  "executionOrder": "v1",
+  "timezone": "Asia/Dubai"
+ }
+}

@@ -116,7 +116,7 @@
   {
    "parameters": {
     "method": "GET",
-    "url": "https://api.github.com/repos/abdelrahmansheta3-design/restaurant-intelligence/contents/glowup/status.json",
+    "url": "https://api.github.com/repos/abdelrahmansheta3-design/glowup-workflow-and-portfolio/contents/glowup/status.json",
     "authentication": "genericCredentialType",
     "genericAuthType": "httpHeaderAuth",
     "sendHeaders": true,
@@ -146,7 +146,7 @@
   {
    "parameters": {
     "method": "PUT",
-    "url": "https://api.github.com/repos/abdelrahmansheta3-design/restaurant-intelligence/contents/glowup/status.json",
+    "url": "https://api.github.com/repos/abdelrahmansheta3-design/glowup-workflow-and-portfolio/contents/glowup/status.json",
     "authentication": "genericCredentialType",
     "genericAuthType": "httpHeaderAuth",
     "sendHeaders": true,

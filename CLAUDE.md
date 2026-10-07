@@ -34,4 +34,4 @@ Never commit the plaintext source, passwords, tokens, or the Telegram chat id.
 - Numbers are computed in code; the AI only writes the text.
 - No patient names or phone numbers anywhere; aggregates only.
 - Viewers must never be able to edit anything.
-- Before any git push, show the owner a short summary (commits + files touched) and wait for an explicit OK. Each push needs its own OK.
+- Before any `git push`, show the owner a short summary of what will change and wait for their OK.

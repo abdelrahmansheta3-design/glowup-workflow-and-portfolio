@@ -12,7 +12,7 @@ Owner: Abd Elrahman Sheta (marketing + AI automation, Dubai). Talks in Egyptian 
 - The plaintext dashboard source and `build.py` are **not** in this repo on purpose (the repo is public). They live in a private folder on the owner's Mac: `glowup-src/`.
 
 ## Editing the clinic dashboard
-1. Edit `../glowup-src/index.html` (plaintext).
+1. Edit `../glowup-src/clinic-dashboard-source.html` (plaintext; older copies call it `index.html`).
 2. Run `python3 ../glowup-src/build.py` (needs `pip install cryptography`); it writes `glowup/index.html` here. Login users and the visit-alert webhook are set inside build.py.
 3. `git pull --rebase` first (n8n pushes daily commits), then commit and push. Cloudflare redeploys in about a minute.
 Never commit the plaintext source, passwords, tokens, or the Telegram chat id.

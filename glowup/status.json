@@ -1,37 +1,37 @@
 {
- "lastRun": "2026-10-07T04:00:18.664Z",
- "reportDate": "2026-10-06",
- "rowsProcessed": 462,
+ "lastRun": "2026-10-08T04:00:14.046Z",
+ "reportDate": "2026-10-07",
+ "rowsProcessed": 471,
  "agents": [
   {
    "id": "ads",
    "name": "Ads Analyst",
    "state": "done",
-   "result": "5 ads flagged · ROAS 10.4x"
+   "result": "5 ads flagged · ROAS 10.7x"
   },
   {
    "id": "sales",
    "name": "Sales Coach",
    "state": "done",
-   "result": "Team A 14 min · Team B 47 min"
+   "result": "Team A 14 min · Team B 43 min"
   },
   {
    "id": "ops",
    "name": "Operations",
    "state": "done",
-   "result": "15 attended · 1 no-shows"
+   "result": "16 attended · 6 no-shows"
   },
   {
    "id": "reviews",
    "name": "Reviews Monitor",
    "state": "done",
-   "result": "5 new reviews · avg 4.8"
+   "result": "4 new reviews · avg 5"
   },
   {
    "id": "reports",
    "name": "Team Reports Reader",
    "state": "done",
-   "result": "38/40 reports"
+   "result": "37/40 reports"
   },
   {
    "id": "brief",
@@ -41,9 +41,9 @@
   }
  ],
  "totals": {
-  "revenue": 35050,
-  "leads": 127,
-  "booked": 16,
-  "adSpend": 2250
+  "revenue": 78300,
+  "leads": 122,
+  "booked": 22,
+  "adSpend": 2191
  }
 }
